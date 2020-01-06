@@ -2,30 +2,24 @@
 require 'fileutils'
 
 class EtvMediaScraper
-    @@config_name = 'config.json'
-    @@loot_name = 'loot'
+  @tasks = []
 
-    @tasks = Array.new
+  def initialize
+    @config_path = File.join(File.dirname(__FILE__), 'config.json')
+    @loot_path = File.join(File.dirname(__FILE__), 'loot')
 
-    def initialize
-        @config_path = File.join(File.dirname(__FILE__), @@config_name)
-        @loot_path = File.join(File.dirname(__FILE__), @@loot_name)
+    File.directory? @loot_path unless FileUtils.mkdir @loot_path
+  end
 
-        unless File.directory? @loot_path
-            FileUtils.mkdir @loot_path
-        end
-    end
+  def add_task
+  end
 
-    def add_task
-    end
+  def process_task
+  end
 
-    def process_task
-    end
-
-    def run
-    end
+  def run
+  end
 end
 
 scraper = EtvMediaScraper.new
 scraper.run
-
