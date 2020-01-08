@@ -6,7 +6,6 @@ require_relative 'lib/etv_media_scraper_config'
 
 class EtvMediaScraper
   def initialize
-    @config_path = File.join(File.dirname(__FILE__), 'config.json')
     @tmp_path = File.join(File.dirname(__FILE__), 'tmp')
     @loot_path = File.join(File.dirname(__FILE__), 'loot')
 
