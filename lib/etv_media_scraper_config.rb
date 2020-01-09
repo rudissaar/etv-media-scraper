@@ -1,5 +1,7 @@
 require 'json'
 
+require_relative 'etv_media_scraper_entity'
+
 class EtvMediaScraperConfig
   @tasks = []
 
@@ -20,9 +22,14 @@ class EtvMediaScraperConfig
     data = JSON.parse(File.read(file))
     data = data['entities']
 
-    data.each do |entity|
-      puts entity['name']
+    data.each do |hash|
+      create_entity(hash)
     end
+  end
+
+  def create_entity(hash)
+    entity = EtvMediaScraperEntity.new(hash['category'])
+    puts entity.category
   end
 
   def pull_tasks
