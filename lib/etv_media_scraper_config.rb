@@ -3,9 +3,10 @@ require 'json'
 require_relative 'etv_media_scraper_entity'
 
 class EtvMediaScraperConfig
-  @tasks = []
+  attr_reader :entities
 
   def initialize
+    @entities = []
     @config_path = File.join(File.dirname(__FILE__), '../config.json')
 
     unless File.file? @config_path
@@ -28,11 +29,7 @@ class EtvMediaScraperConfig
   end
 
   def create_entity(hash)
-    entity = EtvMediaScraperEntity.new(hash['category'])
-    puts entity.category
-  end
-
-  def pull_tasks
-    @tasks
+    entity = EtvMediaScraperEntity.new(hash)
+    @entities.push(entity) if entity.valid?
   end
 end

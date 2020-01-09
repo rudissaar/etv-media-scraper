@@ -13,7 +13,7 @@ class EtvMediaScraper
     FileUtils.mkdir @loot_path unless File.directory? @loot_path
 
     @config = EtvMediaScraperConfig.new
-    @tasks = @config.pull_tasks
+    @entities = @config.entities
   end
 
   def add_task
@@ -23,6 +23,9 @@ class EtvMediaScraper
   end
 
   def run
+    @entities.each do |num|
+      puts num.category
+    end
   end
 end
 
