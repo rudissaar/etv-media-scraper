@@ -23,11 +23,15 @@ class EtvMediaScraper
 
     @config = EtvMediaScraperConfig.new
     @entities = @config.entities
+
+    @resouce_url = nil
   end
 
   def process_entity(entity)
-    url = build_resource_url(entity)
-    puts url
+    @resource_url = build_resource_url(entity)
+    @sources = []
+    fetch_resources(entity)
+    puts @sources
   end
 
   def build_resource_url(entity)
@@ -41,6 +45,25 @@ class EtvMediaScraper
     url.concat(@@api_params_string)
 
     url
+  end
+
+  def fetch_resources(entity)
+    uri = URI(@resource_url)
+    
+    Net::HTTP.start(uri.host, uri.port,
+      :use_ssl => uri.scheme == 'https',
+      :verify_mode => OpenSSL::SSL::VERIFY_NONE) do |http|
+
+      request = Net::HTTP::Get.new uri.request_uri
+      response = http.request request
+      json = JSON.parse(response.body)
+
+      json['data'].each do |obj|
+        obj['medias'].each do |media|
+          @sources.push(media['src']['file'])
+        end
+      end
+    end
   end
 
   def run
