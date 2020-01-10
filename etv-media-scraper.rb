@@ -3,10 +3,12 @@
 require 'fileutils'
 require 'json'
 require 'net/https'
+require 'open-uri'
 require 'time'
 require 'uri'
 
 require_relative 'lib/etv_media_scraper_config'
+require_relative 'lib/etv_media_scraper_entity'
 
 class EtvMediaScraper
   @@etv_api_url = 'https://etv.err.ee/api/tv/getCategoryPastShows?category='
@@ -30,8 +32,15 @@ class EtvMediaScraper
   def process_entity(entity)
     @resource_url = build_resource_url(entity)
     @sources = []
+
     fetch_resources(entity)
-    puts @sources
+
+    @entity_path = File.join(@loot_path, entity.name)
+    FileUtils.mkdir @entity_path unless File.directory? @entity_path
+
+    @sources.each do |source_url|
+      download_source(source_url)
+    end
   end
 
   def build_resource_url(entity)
@@ -60,8 +69,20 @@ class EtvMediaScraper
 
       json['data'].each do |obj|
         obj['medias'].each do |media|
-          @sources.push(media['src']['file'])
+          @sources.push('https:' + media['src']['file'])
         end
+      end
+    end
+  end
+
+  def download_source(source_url)
+    destination_file_path = File.join(@entity_path, File.basename(source_url))
+
+    unless File.file?(destination_file_path)
+      puts('> Downloading: ' + source_url)
+
+      File.open(destination_file_path, 'wb') do |file|
+        file.write open(source_url).read
       end
     end
   end
