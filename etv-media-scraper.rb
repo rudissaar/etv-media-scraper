@@ -69,7 +69,10 @@ class EtvMediaScraper
 
       json['data'].each do |obj|
         obj['medias'].each do |media|
-          @sources.push('https:' + media['src']['file'])
+          url = 'https:' + media['src']['file']
+          if entity.complient?(url)
+            @sources.push(url)
+          end
         end
       end
     end
