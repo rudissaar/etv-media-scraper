@@ -62,8 +62,8 @@ class EtvMediaScraper
     Net::HTTP.start(uri.host, uri.port,
       :use_ssl => uri.scheme == 'https',
       :verify_mode => OpenSSL::SSL::VERIFY_NONE) do |http|
-
       request = Net::HTTP::Get.new(uri.request_uri)
+
       response = http.request(request)
       json = JSON.parse(response.body)
 
@@ -71,23 +71,32 @@ class EtvMediaScraper
         obj['medias'].each do |media|
           url = 'https:' + media['src']['file']
           if entity.complient?(url)
-            file_size = response.to_hash['content-length']
-            filesize = file_size.first if file_size.kind_of?(Array)
-            @sources.push({:url => url, :file_size => file_size.to_i})
+            @sources.push(url)
           end
         end
       end
     end
   end
 
-  def download_source(source)
-    destination_file_path = File.join(@entity_path, File.basename(source[:url]))
+  def download_source(source_url)
+    destination_file_path = File.join(@entity_path, File.basename(source_url))
 
     unless File.file?(destination_file_path)
-      puts('> Downloading: ' + source[:url])
+      puts('> Downloading: ' + source_url)
+      uri = URI(source_url)
 
-      File.open(destination_file_path, 'wb') do |file|
-        file.write open(source[:url]).read
+      response = Net::HTTP.start(uri.host, uri.port,
+      :use_ssl => uri.scheme == 'https',
+      :verify_mode => OpenSSL::SSL::VERIFY_NONE) do |http|
+      request = Net::HTTP::Get.new(uri.request_uri)
+
+        http.request(request) do |response|
+          File.open(destination_file_path, 'wb') do |file|
+            response.read_body do |chunk|
+              file.write(chunk)
+            end
+          end
+        end
       end
     end
   end
