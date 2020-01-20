@@ -38,8 +38,8 @@ class EtvMediaScraper
     @entity_path = File.join(@loot_path, entity.name)
     FileUtils.mkdir @entity_path unless File.directory? @entity_path
 
-    @sources.each do |source_url|
-      download_source(source_url)
+    @sources.each do |source|
+      download_source(source)
     end
   end
 
@@ -53,7 +53,7 @@ class EtvMediaScraper
     url.concat(entity.category.to_s)
     url.concat(@@api_params_string)
 
-    url
+    return url
   end
 
   def fetch_resources(entity)
@@ -63,29 +63,31 @@ class EtvMediaScraper
       :use_ssl => uri.scheme == 'https',
       :verify_mode => OpenSSL::SSL::VERIFY_NONE) do |http|
 
-      request = Net::HTTP::Get.new uri.request_uri
-      response = http.request request
+      request = Net::HTTP::Get.new(uri.request_uri)
+      response = http.request(request)
       json = JSON.parse(response.body)
 
       json['data'].each do |obj|
         obj['medias'].each do |media|
           url = 'https:' + media['src']['file']
           if entity.complient?(url)
-            @sources.push(url)
+            file_size = response.to_hash['content-length']
+            filesize = file_size.first if file_size.kind_of?(Array)
+            @sources.push({:url => url, :file_size => file_size.to_i})
           end
         end
       end
     end
   end
 
-  def download_source(source_url)
-    destination_file_path = File.join(@entity_path, File.basename(source_url))
+  def download_source(source)
+    destination_file_path = File.join(@entity_path, File.basename(source[:url]))
 
     unless File.file?(destination_file_path)
-      puts('> Downloading: ' + source_url)
+      puts('> Downloading: ' + source[:url])
 
       File.open(destination_file_path, 'wb') do |file|
-        file.write open(source_url).read
+        file.write open(source[:url]).read
       end
     end
   end
