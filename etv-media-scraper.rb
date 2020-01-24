@@ -9,6 +9,7 @@ require 'uri'
 
 require_relative 'lib/etv_media_scraper_config'
 require_relative 'lib/etv_media_scraper_entity'
+require_relative 'lib/etv_media_scraper_downloader'
 
 class EtvMediaScraper
   @@etv_api_url = 'https://etv.err.ee/api/tv/getCategoryPastShows?category='
@@ -39,7 +40,8 @@ class EtvMediaScraper
     FileUtils.mkdir @entity_path unless File.directory? @entity_path
 
     @sources.each do |source|
-      download_source(source)
+      downloader = EtvMediaScraperDownloader.new(source, @entity_path)
+      downloader.run()
     end
   end
 
@@ -72,29 +74,6 @@ class EtvMediaScraper
           url = 'https:' + media['src']['file']
           if entity.complient?(url)
             @sources.push(url)
-          end
-        end
-      end
-    end
-  end
-
-  def download_source(source_url)
-    destination_file_path = File.join(@entity_path, File.basename(source_url))
-
-    unless File.file?(destination_file_path)
-      puts('> Downloading: ' + source_url)
-      uri = URI(source_url)
-
-      response = Net::HTTP.start(uri.host, uri.port,
-      :use_ssl => uri.scheme == 'https',
-      :verify_mode => OpenSSL::SSL::VERIFY_NONE) do |http|
-      request = Net::HTTP::Get.new(uri.request_uri)
-
-        http.request(request) do |response|
-          File.open(destination_file_path, 'wb') do |file|
-            response.read_body do |chunk|
-              file.write(chunk)
-            end
           end
         end
       end
