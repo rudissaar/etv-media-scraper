@@ -6,10 +6,19 @@ class EtvMediaScraperDownloader
   def initialize(source_url = nil, destination_path = nil)
     @source_url = source_url
     @destination_path = destination_path
+
+    @skip_path = File.join(File.dirname(__FILE__), '../skip')
   end
 
   def run
-    destination_file = File.join(@destination_path, File.basename(@source_url))
+    basename = File.basename(@source_url)
+    skip_file = File.join(@skip_path, basename)
+    destination_file = File.join(@destination_path, basename)
+
+    if File.file?(skip_file)
+      puts('> Skipping: ' + basename)
+      return
+    end
 
     unless File.file?(destination_file)
       puts('> Downloading: ' + @source_url)
