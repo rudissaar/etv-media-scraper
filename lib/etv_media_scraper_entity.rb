@@ -1,3 +1,5 @@
+require 'fileutils'
+
 class EtvMediaScraperEntity
   attr_accessor :name
   attr_reader :skip, :category, :etv2, :referer
@@ -36,5 +38,15 @@ class EtvMediaScraperEntity
     end
 
     return true
+  end
+
+  def move_to_loot(tmp_file_path, loot_path)
+    full_loot_path = File.join(loot_path, @name)
+    FileUtils.mkdir(full_loot_path) unless File.directory?(full_loot_path)
+
+    loot_file_basename = File.basename(tmp_file_path)
+    loot_file_path = File.join(full_loot_path, loot_file_basename)
+
+    FileUtils.mv(tmp_file_path, loot_file_path)
   end
 end

@@ -18,7 +18,7 @@ class EtvMediaScraperDownloader
 
     if File.file?(skip_file)
       puts('> Skipping: ' + basename)
-      return
+      return nil
     end
 
     unless File.file?(destination_file)
@@ -48,5 +48,7 @@ class EtvMediaScraperDownloader
         end
       end
     end
+
+    return destination_file
   end
 end
