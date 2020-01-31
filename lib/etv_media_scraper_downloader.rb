@@ -49,6 +49,8 @@ class EtvMediaScraperDownloader
       end
     end
 
+    FileUtils.touch(skip_file)
+
     return destination_file
   end
 end
