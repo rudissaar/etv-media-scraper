@@ -37,7 +37,7 @@ class EtvMediaScraper
     fetch_resources(entity)
 
     @sources.each do |source|
-      downloader = EtvMediaScraperDownloader.new(source, @tmp_path)
+      downloader = EtvMediaScraperDownloader.new(source, @tmp_path, @config.downloader_options)
       downloaded_file = downloader.run()
       entity.move_to_loot(downloaded_file, @loot_path) if downloaded_file
     end

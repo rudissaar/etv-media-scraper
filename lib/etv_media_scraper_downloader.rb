@@ -6,9 +6,13 @@ require 'uri'
 class EtvMediaScraperDownloader
   @@skip_path = File.join(File.dirname(__FILE__), '../skip')
 
-  def initialize(source_url = nil, destination_path = nil)
+  def initialize(source_url = nil, destination_path = nil, options = {})
     @source_url = source_url
     @destination_path = destination_path
+
+    options.each do |option, value|
+      instance_variable_set("@#{option}", value) unless value.nil?
+    end
   end
 
   def run
