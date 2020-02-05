@@ -15,22 +15,11 @@ class EtvMediaScraperDownloader
     end
   end
 
-  def run
-    basename = File.basename(@source_url)
-    skip_file = File.join(@@skip_path, basename)
-    destination_file = File.join(@destination_path, basename)
+  def run_wget
+    system("wget #{@source_url} -O #{@destination_file}")
+  end
 
-    if File.file?(skip_file)
-      puts('> Skipping: ' + basename)
-      return nil
-    end
-
-    if File.file?(destination_file)
-      puts('> Removing existing file: ' + destination_file)
-      File.delete(destination_file)
-    end
-
-    puts('> Downloading: ' + @source_url)
+  def run_native
     uri = URI(@source_url)
 
     response = Net::HTTP.start(uri.host, uri.port,
@@ -47,7 +36,7 @@ class EtvMediaScraperDownloader
           progressbar.total = response.header['content-length'].to_i
         end
 
-        File.open(destination_file, 'wb') do |file|
+        File.open(@destination_file, 'wb') do |file|
           response.read_body do |chunk|
             file.write(chunk)
             progressbar.progress += chunk.length
@@ -55,9 +44,27 @@ class EtvMediaScraperDownloader
         end
       end
     end
+  end
 
+  def run
+    basename = File.basename(@source_url)
+    skip_file = File.join(@@skip_path, basename)
+    @destination_file = File.join(@destination_path, basename)
+
+    if File.file?(skip_file)
+      puts('> Skipping: ' + basename)
+      return nil
+    end
+
+    if File.file?(@destination_file)
+      puts('> Removing existing file: ' + @destination_file)
+      File.delete(@destination_file)
+    end
+
+    puts('> Downloading: ' + @source_url)
+    @use_wget ? run_wget : run_native
+    
     FileUtils.touch(skip_file)
-
-    return destination_file
+    return @destination_file
   end
 end
