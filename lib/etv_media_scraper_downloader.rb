@@ -6,7 +6,7 @@ require 'uri'
 class EtvMediaScraperDownloader
   @@skip_path = File.join(File.dirname(__FILE__), '../skip')
 
-  def initialize(source_url = nil, destination_path = nil, options = {})
+  def initialize(source_url, destination_path, options = {})
     @source_url = source_url
     @destination_path = destination_path
 
@@ -25,29 +25,32 @@ class EtvMediaScraperDownloader
       return nil
     end
 
-    unless File.file?(destination_file)
-      puts('> Downloading: ' + @source_url)
-      uri = URI(@source_url)
+    if File.file?(destination_file)
+      puts('> Removing existing file: ' + destination_file)
+      File.delete(destination_file)
+    end
 
-      response = Net::HTTP.start(uri.host, uri.port,
-      :use_ssl => uri.scheme == 'https',
-      :verify_mode => OpenSSL::SSL::VERIFY_NONE) do |http|
-        request = Net::HTTP::Get.new(uri.request_uri)
-        progressbar = ProgressBar.create(
-          :format => "%a %b\u{15E7}%i %p%% %t",
-          :progress_mark => ' ',
-          :remainder_mark => "\u{FF65}")
+    puts('> Downloading: ' + @source_url)
+    uri = URI(@source_url)
 
-        http.request(request) do |response|
-          if response.header['content-length']
-            progressbar.total = response.header['content-length'].to_i
-          end
+    response = Net::HTTP.start(uri.host, uri.port,
+    :use_ssl => uri.scheme == 'https',
+    :verify_mode => OpenSSL::SSL::VERIFY_NONE) do |http|
+      request = Net::HTTP::Get.new(uri.request_uri)
+      progressbar = ProgressBar.create(
+        :format => "%a %b\u{15E7}%i %p%% %t",
+        :progress_mark => ' ',
+        :remainder_mark => "\u{FF65}")
 
-          File.open(destination_file, 'wb') do |file|
-            response.read_body do |chunk|
-              file.write(chunk)
-              progressbar.progress += chunk.length
-            end
+      http.request(request) do |response|
+        if response.header['content-length']
+          progressbar.total = response.header['content-length'].to_i
+        end
+
+        File.open(destination_file, 'wb') do |file|
+          response.read_body do |chunk|
+            file.write(chunk)
+            progressbar.progress += chunk.length
           end
         end
       end
