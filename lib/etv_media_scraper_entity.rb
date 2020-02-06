@@ -6,7 +6,6 @@ class EtvMediaScraperEntity
 
   def initialize(hash)
     @skip = false
-    @name = nil
     @etv2 = false
     @referer = nil
 

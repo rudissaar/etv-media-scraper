@@ -68,6 +68,10 @@ class EtvMediaScraper
       json = JSON.parse(response.body)
 
       json['data'].each do |obj|
+        unless entity.name
+          entity.name = obj['primaryCategory']['name']
+        end
+
         obj['medias'].each do |media|
           url = 'https:' + media['src']['file']
           if entity.complient?(url)
