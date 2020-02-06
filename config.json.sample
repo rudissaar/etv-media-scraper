@@ -1,0 +1,26 @@
+{
+    "downloader": {
+        "use_wget": false
+    },
+    "entities": [
+        {
+            "skip": true,
+            "etv2": true,
+            "category": 4016,
+        },
+        {
+            "skip": true,
+            "category": 2914,
+            "source_rules": {
+                "url_must_exclude": [
+                    "etvvideod"
+                ]
+            }
+        },
+        {
+            "skip": true,
+            "category": 4023,
+            "etv2": true
+        }
+    ]
+}
