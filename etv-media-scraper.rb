@@ -7,9 +7,9 @@ require 'open-uri'
 require 'time'
 require 'uri'
 
-require_relative 'lib/etv_media_scraper_config'
-require_relative 'lib/etv_media_scraper_entity'
-require_relative 'lib/etv_media_scraper_downloader'
+require_relative File.join('lib', 'etv_media_scraper_config')
+require_relative File.join('lib', 'etv_media_scraper_entity')
+require_relative File.join('lib', 'etv_media_scraper_downloader')
 
 class EtvMediaScraper
   @@etv_api_url = 'https://etv.err.ee/api/tv/getCategoryPastShows?category='
@@ -18,8 +18,8 @@ class EtvMediaScraper
   @@api_params_string = '&fullData=1'
 
   def initialize
-    @tmp_path = File.join(File.dirname(__FILE__), 'tmp')
-    @loot_path = File.join(File.dirname(__FILE__), 'loot')
+    @tmp_path = File.join(__dir__, 'tmp')
+    @loot_path = File.join(__dir__, 'loot')
 
     FileUtils.mkdir @tmp_path unless File.directory? @tmp_path
     FileUtils.mkdir @loot_path unless File.directory? @loot_path
