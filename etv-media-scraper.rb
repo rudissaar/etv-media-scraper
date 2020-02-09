@@ -9,6 +9,7 @@ require 'uri'
 
 require_relative File.join('lib', 'etv_media_scraper_config')
 require_relative File.join('lib', 'etv_media_scraper_entity')
+require_relative File.join('lib', 'etv_media_scraper_episode')
 require_relative File.join('lib', 'etv_media_scraper_downloader')
 
 class EtvMediaScraper
@@ -32,14 +33,14 @@ class EtvMediaScraper
 
   def process_entity(entity)
     @resource_url = build_resource_url(entity)
-    @sources = []
+    @episodes = []
 
     fetch_resources(entity)
 
-    @sources.each do |source|
-      downloader = EtvMediaScraperDownloader.new(source, @tmp_path, @config.downloader_options)
-      downloaded_file = downloader.run()
-      entity.move_to_loot(downloaded_file, @loot_path) if downloaded_file
+    @episodes.each do |episode|
+      downloader = EtvMediaScraperDownloader.new(episode.url, @tmp_path, @config.downloader_options)
+      downloaded_file = downloader.run
+      entity.move_to_loot(downloaded_file, @loot_path, episode) if downloaded_file
     end
   end
 
@@ -72,12 +73,18 @@ class EtvMediaScraper
           entity.name = obj['primaryCategory']['name']
         end
 
+        episode = EtvMediaScraperEpisode.new
+
         obj['medias'].each do |media|
           url = 'https:' + media['src']['file']
           if entity.complient?(url)
-            @sources.push(url)
+            episode.url = url
           end
         end
+
+        next unless episode.url
+        episode.season = obj['season'].to_i if obj.key?('season')
+        @episodes.push(episode)
       end
     end
   end

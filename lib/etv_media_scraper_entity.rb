@@ -35,8 +35,8 @@ class EtvMediaScraperEntity
     return true
   end
 
-  def move_to_loot(tmp_file_path, loot_path)
-    loot_name = generate_loot_name
+  def move_to_loot(tmp_file_path, loot_path, episode = nil)
+    loot_name = generate_loot_name(episode)
     full_loot_path = File.join(loot_path, loot_name)
     FileUtils.mkdir(full_loot_path) unless File.directory?(full_loot_path)
 
@@ -46,9 +46,9 @@ class EtvMediaScraperEntity
     FileUtils.mv(tmp_file_path, loot_file_path)
   end
 
-  def generate_loot_name
+  def generate_loot_name(episode = nil)
     loot_name = @name
-    # todo
+    loot_name += '.S' + sprintf('%02d', episode.season) if episode && episode.season
 
     return loot_name
   end
