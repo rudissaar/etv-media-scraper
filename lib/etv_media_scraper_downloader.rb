@@ -3,14 +3,17 @@ require 'net/https'
 require 'progressbar'
 require 'uri'
 
+require_relative 'etv_media_scraper_config'
+
 class EtvMediaScraperDownloader
   attr_accessor :url, :destination
 
-  @allowed_options = %w[url destination]
+  def initialize
+    allowed_options = %w[use_wget]
+    config = EtvMediaScraperConfig.new
 
-  def initialize(options = {})
-    options.each do |option, value|
-      if @allowed_options.include?(option)
+    config.downloader_options.each do |option, value|
+      if allowed_options.include?(option)
         instance_variable_set("@#{option}", value) unless value.nil?
       end
     end
@@ -48,14 +51,7 @@ class EtvMediaScraperDownloader
   end
 
   def run
-    if File.file?(@destination)
-      puts('> Removing existing file: ' + @destination)
-      File.delete(@destination)
-    end
-
     puts('> Downloading: ' + @url)
     @use_wget ? run_wget : run_native
-    
-    return true
   end
 end

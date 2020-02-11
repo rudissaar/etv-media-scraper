@@ -7,12 +7,13 @@ class EtvMediaScraperEpisode
   attr_accessor :name, :url, :season, :number, :verbose
 
   def initialize(options = {})
-    @allowed_options = %w[name url season number verbose]
     @paths = %w[skip tmp loot]
     @verbose = true
 
+    allowed_options = %w[name url season number verbose]
+
     options.each do |option, value|
-      if @allowed_options.include?(option)
+      if allowed_options.include?(option)
         instance_variable_set("@#{option}", value) unless value.nil?
       end
     end
@@ -33,21 +34,23 @@ class EtvMediaScraperEpisode
   end
 
   def set_skip
-    if File.file?(@skip_file)
-      puts('> Skipping: ' + File.basename(@skip_file)) if @verbose
-      @skip = true
-    end
+    return unless File.file?(@skip_file)
+    puts('> Skipping: ' + File.basename(@skip_file)) if @verbose
+    @skip = true
   end
 
   def set_destination
     @destination = File.join(@tmp_path, File.basename(@url))
+    return unless File.file?(@destination)
+    puts('> Removing existing file: ' + @destination) if @verbose
+    File.delete(@destination)
   end
 
   def set_final_loot_path
     if @name
       name = @name
-      name += '.S' + sprintf('%02d', @season) if @season
-      
+      name += '.S' + format('%02d', @season) if @season
+
       @final_loot_path = File.join(@loot_path, name)
       FileUtils.mkdir(@final_loot_path) unless File.directory?(@final_loot_path)
     else
@@ -63,7 +66,7 @@ class EtvMediaScraperEpisode
   def before_download
     set_skip_file
     set_skip
-    return if @skip    
+    return if @skip
 
     set_destination
   end
