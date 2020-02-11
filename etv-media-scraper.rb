@@ -19,16 +19,8 @@ class EtvMediaScraper
   @@api_params_string = '&fullData=1'
 
   def initialize
-    @tmp_path = File.join(__dir__, 'tmp')
-    @loot_path = File.join(__dir__, 'loot')
-
-    FileUtils.mkdir @tmp_path unless File.directory? @tmp_path
-    FileUtils.mkdir @loot_path unless File.directory? @loot_path
-
     @config = EtvMediaScraperConfig.new
     @entities = @config.entities
-
-    @resouce_url = nil
   end
 
   def process_entity(entity)
@@ -38,9 +30,7 @@ class EtvMediaScraper
     fetch_resources(entity)
 
     @episodes.each do |episode|
-      downloader = EtvMediaScraperDownloader.new(episode.url, @tmp_path, @config.downloader_options)
-      downloaded_file = downloader.run
-      entity.move_to_loot(downloaded_file, @loot_path, episode) if downloaded_file
+      episode.download
     end
   end
 
@@ -78,6 +68,7 @@ class EtvMediaScraper
         obj['medias'].each do |media|
           url = 'https:' + media['src']['file']
           if entity.complient?(url)
+            episode.name = entity.name
             episode.url = url
           end
         end

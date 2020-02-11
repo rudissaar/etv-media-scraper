@@ -4,23 +4,24 @@ require 'progressbar'
 require 'uri'
 
 class EtvMediaScraperDownloader
-  @@skip_path = File.join(File.dirname(__FILE__), '../skip')
+  attr_accessor :url, :destination
 
-  def initialize(source_url, destination_path, options = {})
-    @source_url = source_url
-    @destination_path = destination_path
+  @allowed_options = %w[url destination]
 
+  def initialize(options = {})
     options.each do |option, value|
-      instance_variable_set("@#{option}", value) unless value.nil?
+      if @allowed_options.include?(option)
+        instance_variable_set("@#{option}", value) unless value.nil?
+      end
     end
   end
 
   def run_wget
-    system("wget #{@source_url} -O #{@destination_file}")
+    system("wget #{@url} -O #{@destination}")
   end
 
   def run_native
-    uri = URI(@source_url)
+    uri = URI(@url)
 
     response = Net::HTTP.start(uri.host, uri.port,
     :use_ssl => uri.scheme == 'https',
@@ -36,7 +37,7 @@ class EtvMediaScraperDownloader
           progressbar.total = response.header['content-length'].to_i
         end
 
-        File.open(@destination_file, 'wb') do |file|
+        File.open(@destination, 'wb') do |file|
           response.read_body do |chunk|
             file.write(chunk)
             progressbar.progress += chunk.length
@@ -47,24 +48,14 @@ class EtvMediaScraperDownloader
   end
 
   def run
-    basename = File.basename(@source_url)
-    skip_file = File.join(@@skip_path, basename)
-    @destination_file = File.join(@destination_path, basename)
-
-    if File.file?(skip_file)
-      puts('> Skipping: ' + basename)
-      return nil
+    if File.file?(@destination)
+      puts('> Removing existing file: ' + @destination)
+      File.delete(@destination)
     end
 
-    if File.file?(@destination_file)
-      puts('> Removing existing file: ' + @destination_file)
-      File.delete(@destination_file)
-    end
-
-    puts('> Downloading: ' + @source_url)
+    puts('> Downloading: ' + @url)
     @use_wget ? run_wget : run_native
     
-    FileUtils.touch(skip_file)
-    return @destination_file
+    return true
   end
 end
