@@ -2,7 +2,7 @@ require 'fileutils'
 
 require_relative 'etv_media_scraper_downloader'
 
-# Class for Episode.
+# Class that holds data and logic for media.
 class EtvMediaScraperEpisode
   attr_accessor :name, :url, :season, :number, :verbose
 

@@ -26,6 +26,14 @@ class EtvMediaScraperDownloader
     system("wget #{@url} -O #{@destination}")
   end
 
+  def progressbar
+    @progressbar = ProgressBar.create(
+      format: "%a %b\u{15E7}%i %p%% %t",
+      progress_mark: ' ',
+      remainder_mark: "\u{FF65}"
+    )
+  end
+
   def native_http_options
     uri = URI(@url)
     options = { options: {} }
@@ -42,19 +50,15 @@ class EtvMediaScraperDownloader
 
     Net::HTTP.start(options[:uri].host, options[:uri].port, options[:options]) do |http|
       request = Net::HTTP::Get.new(options[:uri].request_uri)
-      progressbar = ProgressBar.create(
-        format: "%a %b\u{15E7}%i %p%% %t",
-        progress_mark: ' ',
-        remainder_mark: "\u{FF65}"
-      )
+      progressbar
 
       http.request(request) do |response|
-        progressbar.total = response.header['content-length'].to_i if response.header['content-length']
+        @progressbar.total = response.header['content-length'].to_i if response.header['content-length']
 
         File.open(@destination, 'wb') do |file|
           response.read_body do |chunk|
             file.write(chunk)
-            progressbar.progress += chunk.length
+            @progressbar.progress += chunk.length
           end
         end
       end
