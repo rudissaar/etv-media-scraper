@@ -7,6 +7,7 @@ class EtvMediaScraperEntity
 
   def initialize(options)
     @options = options
+
     allowed_options = %w[name skip category etv2 referer]
 
     options.each do |option, value|

@@ -1,6 +1,7 @@
 require 'fileutils'
 require 'net/https'
 require 'progressbar'
+require 'shellwords'
 require 'uri'
 
 require_relative 'etv_media_scraper_config'
@@ -22,8 +23,18 @@ class EtvMediaScraperDownloader
     end
   end
 
+  def wget_command
+    argv = Shellwords.split('wget')
+    argv << Shellwords.escape(@url)
+    argv << Shellwords.split('-O')
+    argv << Shellwords.escape(@destination)
+
+    argv.join(' ')
+  end
+
   def run_wget
-    system("wget #{@url} -O #{@destination}")
+    command = wget_command
+    system(command)
   end
 
   def progressbar
