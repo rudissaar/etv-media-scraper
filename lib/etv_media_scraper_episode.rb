@@ -1,4 +1,5 @@
 require 'fileutils'
+require 'pathname'
 
 require_relative 'etv_media_scraper_downloader'
 
@@ -40,7 +41,7 @@ class EtvMediaScraperEpisode
   end
 
   def set_destination
-    @destination = File.join(@tmp_path, File.basename(@url))
+    @destination = Pathname.new(File.join(@tmp_path, File.basename(@url))).cleanpath.to_s
     return unless File.file?(@destination)
     puts('> Removing existing file: ' + @destination) if @verbose
     File.delete(@destination)
