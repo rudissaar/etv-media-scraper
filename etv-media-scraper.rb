@@ -24,18 +24,17 @@ class EtvMediaScraper
     @entities = @config.entities
   end
 
-  def process_entity(entity)
-    @resource_url = build_resource_url(entity)
+  def process_entity
+    @resource_url = build_resource_url
     @episodes = []
 
-    fetch_resources(entity)
-
+    fetch_resources
     @episodes.each(&:download)
   end
 
-  def build_resource_url(entity)
-    url = entity.etv2 ? @etv2_api_url : @etv_api_url
-    url.concat(entity.category.to_s)
+  def build_resource_url
+    url = @entity.etv2 ? @etv2_api_url : @etv_api_url
+    url.concat(@entity.category.to_s)
     url.concat(@api_params_string)
 
     url
@@ -52,7 +51,7 @@ class EtvMediaScraper
     options
   end
 
-  def fetch_resources(entity)
+  def fetch_resources
     options = resources_http_options
 
     Net::HTTP.start(options[:uri].host, options[:uri].port, options[:options]) do |http|
@@ -62,14 +61,14 @@ class EtvMediaScraper
       json = JSON.parse(response.body)
 
       json['data'].each do |obj|
-        entity.name = obj['primaryCategory']['name'] unless entity.name
+        @entity.name = obj['primaryCategory']['name'] unless @entity.name
 
         episode = EtvMediaScraperEpisode.new
 
         obj['medias'].each do |media|
           url = 'https:' + media['src']['file']
-          if entity.complient?(url)
-            episode.name = entity.name
+          if @entity.complient?(url)
+            episode.name = @entity.name
             episode.url = url
           end
         end
@@ -83,7 +82,8 @@ class EtvMediaScraper
 
   def run
     @entities.each do |entity|
-      process_entity(entity)
+      @entity = entity
+      process_entity
     end
   end
 end
