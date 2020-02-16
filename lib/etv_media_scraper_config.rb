@@ -2,17 +2,18 @@ require 'json'
 
 require_relative 'etv_media_scraper_entity'
 
+# Class that handles reading configuration file and creating entities/tasks.
 class EtvMediaScraperConfig
   attr_reader :entities
 
-  def initialize()
+  def initialize
     @config_path = File.join(__dir__, '..', 'config.json')
     @entities = []
 
     unless File.file?(@config_path)
-      puts '> Unable to locate config.json file.'
-      puts '> Aborting.'
-      exit 1
+      puts('> Unable to locate config.json file.')
+      puts('> Aborting.')
+      exit(1)
     end
 
     read_config
@@ -21,30 +22,25 @@ class EtvMediaScraperConfig
   def read_config
     file = File.open(@config_path)
     @data = JSON.parse(File.read(file))
-
     entities = @data['entities']
 
-    entities.each do |hash|
-      create_entity(hash)
+    entities.each do |options|
+      create_entity(options)
     end
   end
 
-  def create_entity(hash)
-    entity = EtvMediaScraperEntity.new(hash)
+  def create_entity(options)
+    entity = EtvMediaScraperEntity.new(options)
     @entities.push(entity) if entity.valid?
   end
 
   def downloader_options
     options = {}
 
-    if @data.key?('downloader')
-      downloader_options = @data['downloader']
+    return options unless @data.key?('downloader')
+    downloader_options = @data['downloader']
+    options['use_wget'] = downloader_options['use_wget'] if downloader_options.key?('use_wget')
 
-      if downloader_options.key?('use_wget')
-        options['use_wget'] = downloader_options['use_wget']
-      end
-    end
-
-    return options
+    options
   end
 end
