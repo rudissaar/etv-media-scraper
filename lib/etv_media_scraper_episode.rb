@@ -5,7 +5,8 @@ require_relative 'etv_media_scraper_downloader'
 
 # Class that holds data and logic for media.
 class EtvMediaScraperEpisode
-  attr_accessor :name, :url, :season, :number, :verbose
+  attr_accessor :name, :url, :verbose
+  attr_reader :season, :number
 
   def initialize(options = {})
     @paths = %w[skip tmp loot]
@@ -19,10 +20,18 @@ class EtvMediaScraperEpisode
       end
     end
 
-    set_and_create_paths
+    assign_and_create_paths
   end
 
-  def set_and_create_paths
+  def season=(value)
+    @season = value.to_i
+  end
+
+  def number=(value)
+    @number = value.to_i
+  end
+
+  def assign_and_create_paths
     @paths.each do |path|
       joined_path = File.join(__dir__, '..', path)
       instance_variable_set("@#{path}_path", joined_path)
@@ -30,24 +39,24 @@ class EtvMediaScraperEpisode
     end
   end
 
-  def set_skip_file
+  def assign_skip_file
     @skip_file = File.join(@skip_path, File.basename(@url))
   end
 
-  def set_skip
+  def assign_skip
     return unless File.file?(@skip_file)
     puts('> Skipping: ' + File.basename(@skip_file)) if @verbose
     @skip = true
   end
 
-  def set_destination
+  def assign_destination
     @destination = Pathname.new(File.join(@tmp_path, File.basename(@url))).cleanpath.to_s
     return unless File.file?(@destination)
     puts('> Removing existing file: ' + @destination) if @verbose
     File.delete(@destination)
   end
 
-  def set_final_loot_path
+  def assign_final_loot_path
     if @name
       name = @name
       name += '.S' + format('%02d', @season) if @season
@@ -59,17 +68,17 @@ class EtvMediaScraperEpisode
     end
   end
 
-  def set_final_loot_file
+  def assign_final_loot_file
     name = File.basename(@url)
     @final_loot_file = File.join(@final_loot_path, name)
   end
 
   def before_download
-    set_skip_file
-    set_skip
+    assign_skip_file
+    assign_skip
     return if @skip
 
-    set_destination
+    assign_destination
   end
 
   def download
@@ -86,8 +95,8 @@ class EtvMediaScraperEpisode
 
   def after_download
     FileUtils.touch(@skip_file)
-    set_final_loot_path
-    set_final_loot_file
+    assign_final_loot_path
+    assign_final_loot_file
     move_to_loot
   end
 
