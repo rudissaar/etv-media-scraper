@@ -59,8 +59,9 @@ class EtvMediaScraper
 
       next unless episode.url
 
-      episode.season = obj['season'].to_i if obj.key?('season')
+      episode.season = obj['season'].to_i
       episode.number = EtvMediaScraperHelper.parse_episode_number(obj['shortNumberInfo'])
+      episode.name = obj['progTitle']
 
       @episodes.push(episode)
     end
