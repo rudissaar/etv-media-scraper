@@ -3,11 +3,10 @@
 require 'fileutils'
 require 'json'
 require 'net/https'
-require 'open-uri'
 require 'time'
-require 'uri'
 
 require_relative File.join('lib', 'etv_media_scraper_config')
+require_relative File.join('lib', 'etv_media_scraper_helper')
 require_relative File.join('lib', 'etv_media_scraper_entity')
 require_relative File.join('lib', 'etv_media_scraper_episode')
 require_relative File.join('lib', 'etv_media_scraper_downloader')
@@ -41,14 +40,7 @@ class EtvMediaScraper
   end
 
   def resource_http_options
-    uri = URI(@resource_url)
-    options = { options: {} }
-
-    options[:uri] = uri
-    options[:options][:use_ssl] = uri.scheme == 'https'
-    options[:options][:verify_mode] = OpenSSL::SSL::VERIFY_NONE if options[:options][:use_ssl]
-
-    options
+    EtvMediaScraperHelper.http_options(@resource_url)
   end
 
   def parse_resource

@@ -5,6 +5,7 @@ require 'shellwords'
 require 'uri'
 
 require_relative 'etv_media_scraper_config'
+require_relative 'etv_media_scraper_helper'
 
 # Class that handles downloading media files.
 class EtvMediaScraperDownloader
@@ -46,14 +47,7 @@ class EtvMediaScraperDownloader
   end
 
   def native_http_options
-    uri = URI(@url)
-    options = { options: {} }
-
-    options[:uri] = uri
-    options[:options][:use_ssl] = uri.scheme == 'https'
-    options[:options][:verify_mode] = OpenSSL::SSL::VERIFY_NONE if options[:options][:use_ssl]
-
-    options
+    EtvMediaScraperHelper.http_options(@url)
   end
 
   def run_native
