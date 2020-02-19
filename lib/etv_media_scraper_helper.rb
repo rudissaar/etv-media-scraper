@@ -18,4 +18,11 @@ class EtvMediaScraperHelper
     match = heading.to_s.match(/(?:O|Osa):\s(\d+)/)
     match ? match.captures.last.to_i : nil
   end
+
+  def self.dotify_string(string)
+    string.tr!(',.!:@', '')
+    string.tr!(' ', '.')
+
+    string
+  end
 end

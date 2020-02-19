@@ -2,6 +2,7 @@ require 'fileutils'
 require 'pathname'
 
 require_relative 'etv_media_scraper_downloader'
+require_relative 'etv_media_scraper_helper'
 
 # Class that holds data and logic for media.
 class EtvMediaScraperEpisode
@@ -69,7 +70,13 @@ class EtvMediaScraperEpisode
   end
 
   def assign_final_loot_file
-    name = File.basename(@url)
+    if @name
+      name = EtvMediaScraperHelper.dotify_string(@name)
+      name += File.extname(@url)
+    else
+      name = File.basename(@url)
+    end
+
     @final_loot_file = File.join(@final_loot_path, name)
   end
 
