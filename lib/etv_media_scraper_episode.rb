@@ -5,14 +5,14 @@ require_relative 'etv_media_scraper_downloader'
 
 # Class that holds data and logic for media.
 class EtvMediaScraperEpisode
-  attr_accessor :name, :url, :verbose
+  attr_accessor :entity_name, :name, :url, :verbose
   attr_reader :season, :number
 
   def initialize(options = {})
     @paths = %w[skip tmp loot]
     @verbose = true
 
-    allowed_options = %w[name url season number verbose]
+    allowed_options = %w[entity_name name url season number verbose]
 
     options.each do |option, value|
       if allowed_options.include?(option)
@@ -57,8 +57,8 @@ class EtvMediaScraperEpisode
   end
 
   def assign_final_loot_path
-    if @name
-      name = @name
+    if @entity_name
+      name = @entity_name
       name += '.S' + format('%02d', @season) if @season
 
       @final_loot_path = File.join(@loot_path, name)

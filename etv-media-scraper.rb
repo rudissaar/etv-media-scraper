@@ -52,7 +52,7 @@ class EtvMediaScraper
       obj['medias'].each do |media|
         url = 'https:' + media['src']['file']
         if @entity.complient?(url)
-          episode.name = @entity.name
+          episode.entity_name = @entity.name
           episode.url = url
         end
       end
