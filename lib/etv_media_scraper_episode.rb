@@ -57,27 +57,41 @@ class EtvMediaScraperEpisode
     File.delete(@destination)
   end
 
-  def assign_final_loot_path
+  def assign_final_loot_path_name
     if @entity_name
       name = @entity_name
       name += '.S' + format('%02d', @season) if @season
+    end
 
-      @final_loot_path = File.join(@loot_path, name)
+    @final_loot_path_name = name
+  end
+
+  def assign_final_loot_path
+    assign_final_loot_path_name
+
+    if @final_loot_path_name
+      @final_loot_path = File.join(@loot_path, @final_loot_path_name)
       FileUtils.mkdir(@final_loot_path) unless File.directory?(@final_loot_path)
     else
       @final_loot_path = @loot_path
     end
   end
 
-  def assign_final_loot_file
+  def assign_final_loot_file_name
+    name = File.basename(@url)
+
     if @name
       name = EtvMediaScraperHelper.dotify_string(@name)
       name += File.extname(@url)
-    else
-      name = File.basename(@url)
+      name.prepend(@final_loot_path_name + '.') if @final_loot_path_name
     end
 
-    @final_loot_file = File.join(@final_loot_path, name)
+    @final_loot_file_name = name
+  end
+
+  def assign_final_loot_file
+    assign_final_loot_file_name
+    @final_loot_file = File.join(@final_loot_path, @final_loot_file_name)
   end
 
   def before_download
