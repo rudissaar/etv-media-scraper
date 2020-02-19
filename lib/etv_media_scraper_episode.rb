@@ -83,6 +83,7 @@ class EtvMediaScraperEpisode
     if @name
       name = EtvMediaScraperHelper.dotify_string(@name)
       name += File.extname(@url)
+      name.prepend('E' + format('%02d', @number) + '.') if @number
       name.prepend(@final_loot_path_name + '.') if @final_loot_path_name
     end
 
