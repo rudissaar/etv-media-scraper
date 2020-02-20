@@ -1,0 +1,10 @@
+{
+  "name": "Pealtnägija",
+  "category": 2914,
+  "parent_content_id": 1038446,
+  "source_rules": {
+    "url_must_exclude": [
+      "etvvideod"
+    ]
+  }
+}

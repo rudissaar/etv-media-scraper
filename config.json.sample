@@ -1,29 +1,26 @@
 {
-    "downloader": {
-        "use_wget": false
+  "downloader": {
+    "use_wget": false
+  },
+  "mode": 2,
+  "entities": [
+    {
+      "skip": true,
+      "name": "Pealtnägija",
+      "category": 2914,
+      "parent_content_id": 1038446,
+      "source_rules": {
+        "url_must_exclude": [
+          "etvvideod"
+        ]
+      }
     },
-    "mode": 2,
-    "entities": [
-        {
-            "skip": true,
-            "etv2": true,
-            "category": 4016,
-        },
-        {
-            "skip": true,
-            "category": 2914,
-            "source_rules": {
-                "url_must_exclude": [
-                    "etvvideod"
-                ]
-            }
-        },
-        {
-            "skip": true,
-            "name": "ENSV",
-            "category": 4023,
-            "parent_content_id": 1038624,
-            "etv2": true
-        }
-    ]
+    {
+      "skip": true,
+      "name": "ENSV",
+      "category": 4023,
+      "parent_content_id": 1038624,
+      "etv2": true
+    }
+  ]
 }
