@@ -14,13 +14,25 @@ require_relative File.join('lib', 'etv_media_scraper_downloader')
 # Bootstrap class that connects everything together.
 class EtvMediaScraper
   def initialize
-    @etv_api_url = 'https://etv.err.ee/api/tv/getCategoryPastShows?category='
-    @etv2_api_url = 'https://etv2.err.ee/api/tv/getCategoryPastShows?category='
+    @config = EtvMediaScraperConfig.new
+
+    assign_selector_param
+    assign_selector_key
+
+    @etv_api_url = 'https://etv.err.ee/api/tv/getCategoryPastShows?' + @selector_param
+    @etv2_api_url = 'https://etv2.err.ee/api/tv/getCategoryPastShows?' + @selector_param
     @api_params_ts_string = '&periodStart=0&periodEnd=' + Time.now.to_i.to_s
     @api_params_string = '&fullData=1'
 
-    @config = EtvMediaScraperConfig.new
     @entities = @config.entities
+  end
+
+  def assign_selector_param
+    @selector_param = @config.mode == 2 ? 'parentContentId=' : 'category='
+  end
+
+  def assign_selector_key
+    @selector_key = @config.mode == 2 ? 'parent_content_id' : 'category'
   end
 
   def process_entity
@@ -33,7 +45,7 @@ class EtvMediaScraper
 
   def build_resource_url
     url = @entity.etv2 ? @etv2_api_url : @etv_api_url
-    url.concat(@entity.category.to_s)
+    url.concat(@entity.instance_variable_get("@#{@selector_key}").to_s)
     url.concat(@api_params_string)
 
     url

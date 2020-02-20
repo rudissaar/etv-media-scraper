@@ -3,12 +3,12 @@ require 'fileutils'
 # Class that handles task related data and logic.
 class EtvMediaScraperEntity
   attr_accessor :name
-  attr_reader :skip, :category, :etv2, :referer
+  attr_reader :skip, :category, :parent_content_id, :etv2, :referer
 
   def initialize(options)
     @options = options
 
-    allowed_options = %w[name skip category etv2 referer]
+    allowed_options = %w[name skip category parent_content_id etv2 referer]
 
     options.each do |option, value|
       if allowed_options.include?(option)

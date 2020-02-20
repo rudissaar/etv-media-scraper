@@ -4,7 +4,7 @@ require_relative 'etv_media_scraper_entity'
 
 # Class that handles reading configuration file and creating entities/tasks.
 class EtvMediaScraperConfig
-  attr_reader :entities
+  attr_reader :mode, :entities
 
   def initialize
     @config_path = File.join(__dir__, '..', 'config.json')
@@ -22,8 +22,9 @@ class EtvMediaScraperConfig
   def read_config
     file = File.open(@config_path)
     @data = JSON.parse(File.read(file))
-    entities = @data['entities']
+    @mode = @data.key?('mode') ? @data['mode'].to_i : 1
 
+    entities = @data['entities']
     entities.each do |options|
       create_entity(options)
     end
