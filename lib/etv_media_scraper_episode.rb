@@ -58,11 +58,14 @@ class EtvMediaScraperEpisode
   end
 
   def assign_final_loot_path_name
-    if @entity_name
-      name = @entity_name
-      name += '.S' + format('%02d', @season) if @season
+    parts = []
+
+    unless @entity_name.to_s.strip.empty?
+      parts.push(@entity_name)
+      parts.push('S' + format('%02d', @season)) if @season
     end
 
+    name = parts.join('.')
     @final_loot_path_name = name
   end
 
@@ -77,16 +80,30 @@ class EtvMediaScraperEpisode
     end
   end
 
-  def assign_final_loot_file_name
-    name = File.basename(@url)
+  def assign_track_label
+    string = ''
 
-    if @name
-      name = EtvMediaScraperHelper.dotify_string(@name)
-      name += File.extname(@url)
-      name.prepend('E' + format('%02d', @number) + '.') if @number
-      name.prepend(@final_loot_path_name) if @final_loot_path_name
+    string += @final_loot_path_name unless @final_loot_path_name.to_s.strip.empty?
+    string += 'E' + format('%02d', @number) if @number
+
+    @track_label = string
+  end
+
+  def assign_final_loot_file_name
+    assign_track_label
+
+    parts = []
+
+    parts.push(EtvMediaScraperHelper.dotify_string(@name)) unless @name.to_s.strip.empty?
+    parts.unshift(@track_label) unless @track_label.to_s.strip.empty?
+
+    if parts.empty?
+      parts.push(File.basename(@url))
+    else
+      parts.push(File.extname(@url).delete('.'))
     end
 
+    name = parts.join('.')
     @final_loot_file_name = name
   end
 
