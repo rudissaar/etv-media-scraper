@@ -25,4 +25,14 @@ class EtvMediaScraperHelper
 
     string
   end
+
+  def self.add_signature_to_filename(filename, signature)
+    directory = File.dirname(filename)
+    extension = File.extname(filename)
+    basename = File.basename(filename, extension)
+
+    new_name = basename << '-' << signature << extension
+
+    File.join(directory, new_name)
+  end
 end

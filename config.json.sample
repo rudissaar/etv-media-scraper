@@ -22,5 +22,8 @@
       "parent_content_id": 1038624,
       "etv2": true
     }
-  ]
+  ],
+  "output": {
+    "signature": false
+  }
 }
