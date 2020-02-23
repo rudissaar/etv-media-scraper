@@ -19,11 +19,12 @@ class EtvMediaScraper
     assign_selector_param
     assign_selector_key
 
-    @etv_api_url = 'https://etv.err.ee/api/tv/getCategoryPastShows?' + @selector_param
-    @etv2_api_url = 'https://etv2.err.ee/api/tv/getCategoryPastShows?' + @selector_param
+    @etv_api_url = 'https://etv.err.ee/api/tv/getCategoryPastShows?' << @selector_param
+    @etv2_api_url = 'https://etv2.err.ee/api/tv/getCategoryPastShows?' << @selector_param
     @api_params_ts_string = '&periodStart=0&periodEnd=' + Time.now.to_i.to_s
     @api_params_string = '&fullData=1'
 
+    @config.create_entities
     @entities = @config.entities
   end
 
@@ -45,8 +46,8 @@ class EtvMediaScraper
 
   def build_resource_url
     url = @entity.etv2 ? @etv2_api_url : @etv_api_url
-    url.concat(@entity.instance_variable_get("@#{@selector_key}").to_s)
-    url.concat(@api_params_string)
+    url << @entity.instance_variable_get("@#{@selector_key}").to_s
+    url << @api_params_string
 
     url
   end
@@ -62,7 +63,7 @@ class EtvMediaScraper
       episode = EtvMediaScraperEpisode.new
 
       obj['medias'].each do |media|
-        url = 'https:' + media['src']['file']
+        url = 'https:' << media['src']['file']
         if @entity.complient?(url)
           episode.entity_name = @entity.name
           episode.url = url

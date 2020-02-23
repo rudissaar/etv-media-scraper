@@ -23,7 +23,9 @@ class EtvMediaScraperConfig
     file = File.open(@config_path)
     @data = JSON.parse(File.read(file))
     @mode = @data.key?('mode') ? @data['mode'].to_i : 1
+  end
 
+  def create_entities
     entities = @data['entities']
     entities.each do |options|
       create_entity(options)
@@ -41,6 +43,16 @@ class EtvMediaScraperConfig
     return options unless @data.key?('downloader')
     downloader_options = @data['downloader']
     options['use_wget'] = downloader_options['use_wget'] if downloader_options.key?('use_wget')
+
+    options
+  end
+
+  def output_options
+    options = {}
+
+    return options unless @data.key?('output')
+    output_options = @data['output']
+    options['signature'] = output_options['signature'] if output_options.key?('signature')
 
     options
   end
