@@ -9,7 +9,7 @@ require_relative File.join('lib', 'etv_media_scraper_config')
 require_relative File.join('lib', 'etv_media_scraper_helper')
 require_relative File.join('lib', 'etv_media_scraper_entity')
 require_relative File.join('lib', 'etv_media_scraper_episode')
-require_relative File.join('lib', 'etv_media_scraper_downloader')
+require_relative File.join('lib', 'etv_media_scraper_season')
 
 # Bootstrap class that connects everything together.
 class EtvMediaScraper
@@ -64,17 +64,18 @@ class EtvMediaScraper
 
       obj['medias'].each do |media|
         url = 'https:' << media['src']['file']
-        if @entity.complient?(url)
-          episode.entity_name = @entity.name
-          episode.url = url
-        end
+        episode.url = url if @entity.complient?(url)
       end
 
       next unless episode.url
 
-      episode.season = obj['season'].to_i
+      season = EtvMediaScraperSeason.new
+      season.name = @entity.name
+      season.number = obj['season'].to_i
+
       episode.number = EtvMediaScraperHelper.parse_episode_number(obj['shortNumberInfo'])
       episode.name = obj['progTitle']
+      episode.season = season
 
       @episodes.push(episode)
     end

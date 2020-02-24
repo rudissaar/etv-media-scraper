@@ -4,15 +4,15 @@ require 'pathname'
 require_relative 'etv_media_scraper_config'
 require_relative 'etv_media_scraper_downloader'
 require_relative 'etv_media_scraper_helper'
+require_relative 'etv_media_scraper_season'
 
 # Class that holds data and logic for media.
 class EtvMediaScraperEpisode
-  attr_accessor :entity_name, :name, :url, :verbose
-  attr_reader :season, :number
+  attr_accessor :season, :number, :name, :url, :verbose
 
   def initialize(options = {})
     @config = EtvMediaScraperConfig.new
-    @allowed_options = %w[entity_name name url season number verbose signature]
+    @allowed_options = %w[name url season number verbose signature]
     @paths = %w[skip tmp loot]
     @verbose = true
 
@@ -25,14 +25,6 @@ class EtvMediaScraperEpisode
     end
 
     assign_and_create_paths
-  end
-
-  def season=(value)
-    @season = value.to_i
-  end
-
-  def number=(value)
-    @number = value.to_i
   end
 
   def config_output_options
@@ -71,9 +63,9 @@ class EtvMediaScraperEpisode
   def assign_final_loot_pathname
     parts = []
 
-    unless @entity_name.to_s.strip.empty?
-      parts.push(@entity_name)
-      parts.push('S' << format('%02d', @season)) if @season
+    unless @season.name.to_s.strip.empty?
+      parts.push(@season.name)
+      parts.push('S' << format('%02d', @season.number)) if @season.number
     end
 
     name = parts.join('.')
