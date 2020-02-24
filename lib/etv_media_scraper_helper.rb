@@ -31,8 +31,7 @@ class EtvMediaScraperHelper
     extension = File.extname(filename)
     basename = File.basename(filename, extension)
 
-    new_name = basename << '-' << signature << extension
-
-    File.join(directory, new_name)
+    name = basename << '-' << signature << extension
+    File.join(directory, name)
   end
 end

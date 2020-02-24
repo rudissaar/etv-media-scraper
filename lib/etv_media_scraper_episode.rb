@@ -1,6 +1,7 @@
 require 'fileutils'
 require 'pathname'
 
+require_relative 'etv_media_scraper_config'
 require_relative 'etv_media_scraper_downloader'
 require_relative 'etv_media_scraper_helper'
 
@@ -10,13 +11,15 @@ class EtvMediaScraperEpisode
   attr_reader :season, :number
 
   def initialize(options = {})
+    @config = EtvMediaScraperConfig.new
+    @allowed_options = %w[entity_name name url season number verbose signature]
     @paths = %w[skip tmp loot]
     @verbose = true
 
-    allowed_options = %w[entity_name name url season number verbose]
+    config_output_options
 
     options.each do |option, value|
-      if allowed_options.include?(option)
+      if @allowed_options.include?(option)
         instance_variable_set("@#{option}", value) unless value.nil?
       end
     end
@@ -30,6 +33,14 @@ class EtvMediaScraperEpisode
 
   def number=(value)
     @number = value.to_i
+  end
+
+  def config_output_options
+    @config.output_options.each do |option, value|
+      if @allowed_options.include?(option)
+        instance_variable_set("@#{option}", value) unless value.nil?
+      end
+    end
   end
 
   def assign_and_create_paths
@@ -46,34 +57,35 @@ class EtvMediaScraperEpisode
 
   def assign_skip
     return unless File.file?(@skip_file)
-    puts('> Skipping: ' + File.basename(@skip_file)) if @verbose
+    puts('> Skipping: ' << File.basename(@skip_file)) if @verbose
     @skip = true
   end
 
   def assign_destination
     @destination = Pathname.new(File.join(@tmp_path, File.basename(@url))).cleanpath.to_s
     return unless File.file?(@destination)
-    puts('> Removing existing file: ' + @destination) if @verbose
+    puts('> Removing existing file: ' << @destination) if @verbose
     File.delete(@destination)
   end
 
-  def assign_final_loot_path_name
+  def assign_final_loot_pathname
     parts = []
 
     unless @entity_name.to_s.strip.empty?
       parts.push(@entity_name)
-      parts.push('S' + format('%02d', @season)) if @season
+      parts.push('S' << format('%02d', @season)) if @season
     end
 
     name = parts.join('.')
-    @final_loot_path_name = name
+
+    @final_loot_pathname = name
   end
 
   def assign_final_loot_path
-    assign_final_loot_path_name
+    assign_final_loot_pathname
 
-    if @final_loot_path_name
-      @final_loot_path = File.join(@loot_path, @final_loot_path_name)
+    if @final_loot_pathname
+      @final_loot_path = File.join(@loot_path, @final_loot_pathname)
       FileUtils.mkdir(@final_loot_path) unless File.directory?(@final_loot_path)
     else
       @final_loot_path = @loot_path
@@ -83,17 +95,16 @@ class EtvMediaScraperEpisode
   def assign_track_label
     string = ''
 
-    string += @final_loot_path_name unless @final_loot_path_name.to_s.strip.empty?
-    string += 'E' + format('%02d', @number) if @number
+    string << @final_loot_pathname unless @final_loot_pathname.to_s.strip.empty?
+    string << 'E' << format('%02d', @number) if @number
 
     @track_label = string
   end
 
-  def assign_final_loot_file_name
+  def assign_final_loot_filename
     assign_track_label
 
     parts = []
-
     parts.push(EtvMediaScraperHelper.dotify_string(@name)) unless @name.to_s.strip.empty?
     parts.unshift(@track_label) unless @track_label.to_s.strip.empty?
 
@@ -104,12 +115,14 @@ class EtvMediaScraperEpisode
     end
 
     name = parts.join('.')
-    @final_loot_file_name = name
+    name = EtvMediaScraperHelper.add_signature_to_filename(name, @signature) unless @signature.to_s.strip.empty?
+
+    @final_loot_filename = name
   end
 
   def assign_final_loot_file
-    assign_final_loot_file_name
-    @final_loot_file = File.join(@final_loot_path, @final_loot_file_name)
+    assign_final_loot_filename
+    @final_loot_file = File.join(@final_loot_path, @final_loot_filename)
   end
 
   def before_download
