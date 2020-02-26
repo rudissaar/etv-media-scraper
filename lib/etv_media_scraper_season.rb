@@ -11,4 +11,15 @@ class EtvMediaScraperSeason
       end
     end
   end
+
+  def final_loot_pathname
+    parts = []
+
+    unless @name.to_s.strip.empty?
+      parts.push(@name)
+      parts.push('S' << format('%02d', @number)) if @number
+    end
+
+    parts.join('.')
+  end
 end
