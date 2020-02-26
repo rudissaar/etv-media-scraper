@@ -72,6 +72,7 @@ class EtvMediaScraper
       season = EtvMediaScraperSeason.new
       season.name = @entity.name
       season.number = obj['season'].to_i
+      season.episode = episode
 
       episode.number = EtvMediaScraperHelper.parse_episode_number(obj['shortNumberInfo'])
       episode.name = obj['progTitle']

@@ -12,6 +12,10 @@ class EtvMediaScraperSeason
     end
   end
 
+  def episode=(episode_instance)
+    @episode = episode_instance if episode_instance.is_a?(EtvMediaScraperEpisode)
+  end
+
   def final_loot_pathname
     parts = []
 
