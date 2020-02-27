@@ -1,7 +1,6 @@
 require 'fileutils'
 require 'pathname'
 
-require_relative 'etv_media_scraper_config'
 require_relative 'etv_media_scraper_downloader'
 require_relative 'etv_media_scraper_helper'
 require_relative 'etv_media_scraper_season'
@@ -11,7 +10,6 @@ class EtvMediaScraperEpisode
   attr_accessor :number, :name, :url, :verbose
 
   def initialize(options = {})
-    @config = EtvMediaScraperConfig.new
     @allowed_options = %w[name url season number verbose signature]
     @paths = %w[skip tmp loot]
     @verbose = true
@@ -32,7 +30,7 @@ class EtvMediaScraperEpisode
   end
 
   def config_output_options
-    @config.output_options.each do |option, value|
+    $config.output_options.each do |option, value|
       if @allowed_options.include?(option)
         instance_variable_set("@#{option}", value) unless value.nil?
       end

@@ -9,3 +9,7 @@ Metrics/AbcSize:
 
 Metrics/LineLength:
   Max: 120
+
+GlobalVars:
+  AllowedVariables:
+    - $config

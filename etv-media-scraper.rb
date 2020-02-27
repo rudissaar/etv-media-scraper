@@ -14,7 +14,7 @@ require_relative File.join('lib', 'etv_media_scraper_season')
 # Bootstrap class that connects everything together.
 class EtvMediaScraper
   def initialize
-    @config = EtvMediaScraperConfig.new
+    $config = EtvMediaScraperConfig.new
 
     assign_selector_param
     assign_selector_key
@@ -24,16 +24,16 @@ class EtvMediaScraper
     @api_params_ts_string = '&periodStart=0&periodEnd=' + Time.now.to_i.to_s
     @api_params_string = '&fullData=1'
 
-    @config.create_entities
-    @entities = @config.entities
+    $config.create_entities
+    @entities = $config.entities
   end
 
   def assign_selector_param
-    @selector_param = @config.mode == 2 ? 'parentContentId=' : 'category='
+    @selector_param = $config.mode == 2 ? 'parentContentId=' : 'category='
   end
 
   def assign_selector_key
-    @selector_key = @config.mode == 2 ? 'parent_content_id' : 'category'
+    @selector_key = $config.mode == 2 ? 'parent_content_id' : 'category'
   end
 
   def process_entity
