@@ -8,6 +8,7 @@ require_relative 'etv_media_scraper_season'
 # Class that holds data and logic for media.
 class EtvMediaScraperEpisode
   attr_accessor :number, :name, :url, :verbose
+  attr_reader :loot_path
 
   def initialize(options = {})
     @allowed_options = %w[name url season number verbose signature]
@@ -67,21 +68,15 @@ class EtvMediaScraperEpisode
   end
 
   def assign_final_loot_path
-    assign_final_loot_pathname
-
-    if @final_loot_pathname
-      @final_loot_path = File.join(@loot_path, @final_loot_pathname)
-      FileUtils.mkdir(@final_loot_path) unless File.directory?(@final_loot_path)
-    else
-      @final_loot_path = @loot_path
-    end
+    @final_loot_path = @season.final_loot_path
   end
 
   def assign_track_label
     string = ''
 
-    string << @final_loot_pathname unless @final_loot_pathname.to_s.strip.empty?
-    string << 'E' << format('%02d', @number) if @number
+    string << @season.name << '.' unless @season.to_s.strip.empty?
+    string << 'S' << format('%02d', @season.number) unless @season.number.to_s.strip.empty?
+    string << 'E' << format('%02d', @number) unless @number.to_s.strip.empty?
 
     @track_label = string
   end

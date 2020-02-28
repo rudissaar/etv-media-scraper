@@ -1,3 +1,5 @@
+require 'fileutils'
+
 # Class that holds season related data.
 class EtvMediaScraperSeason
   attr_accessor :name, :number
@@ -25,5 +27,18 @@ class EtvMediaScraperSeason
     end
 
     parts.join('.')
+  end
+
+  def final_loot_path
+    path = ''
+
+    if final_loot_pathname
+      path = File.join(@episode.loot_path, final_loot_pathname)
+      FileUtils.mkdir(path) unless File.directory?(path)
+    else
+      path = @episode.loot_path
+    end
+
+    path
   end
 end
