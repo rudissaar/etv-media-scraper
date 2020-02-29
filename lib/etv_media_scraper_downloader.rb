@@ -4,10 +4,13 @@ require 'progressbar'
 require 'shellwords'
 require 'uri'
 
+require_relative 'etv_media_scraper_global'
 require_relative 'etv_media_scraper_helper'
 
 # Class that handles downloading media files.
 class EtvMediaScraperDownloader
+  prepend EtvMediaScraperGlobal
+
   attr_accessor :url, :destination, :verbose
 
   def initialize

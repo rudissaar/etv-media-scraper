@@ -2,11 +2,14 @@ require 'fileutils'
 require 'pathname'
 
 require_relative 'etv_media_scraper_downloader'
+require_relative 'etv_media_scraper_global'
 require_relative 'etv_media_scraper_helper'
 require_relative 'etv_media_scraper_season'
 
 # Class that holds data and logic for media.
 class EtvMediaScraperEpisode
+  prepend EtvMediaScraperGlobal
+
   attr_accessor :number, :name, :url, :verbose
   attr_reader :loot_path
 

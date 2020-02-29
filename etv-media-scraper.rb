@@ -5,17 +5,17 @@ require 'json'
 require 'net/https'
 require 'time'
 
-require_relative File.join('lib', 'etv_media_scraper_config')
-require_relative File.join('lib', 'etv_media_scraper_helper')
 require_relative File.join('lib', 'etv_media_scraper_entity')
 require_relative File.join('lib', 'etv_media_scraper_episode')
+require_relative File.join('lib', 'etv_media_scraper_global')
+require_relative File.join('lib', 'etv_media_scraper_helper')
 require_relative File.join('lib', 'etv_media_scraper_season')
 
 # Bootstrap class that connects everything together.
 class EtvMediaScraper
-  def initialize
-    $config = EtvMediaScraperConfig.new
+  prepend EtvMediaScraperGlobal
 
+  def initialize
     assign_selector_param
     assign_selector_key
 
