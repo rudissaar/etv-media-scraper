@@ -1,7 +1,11 @@
 require 'fileutils'
 
+require_relative 'etv_media_scraper_global'
+
 # Class that handles task related data and logic.
 class EtvMediaScraperEntity
+  prepend EtvMediaScraperGlobal
+
   attr_accessor :name
   attr_reader :skip, :category, :parent_content_id, :etv2, :referer
 
@@ -38,7 +42,13 @@ class EtvMediaScraperEntity
   end
 
   def valid?
-    !@skip && @category && @category.is_a?(Integer)
+    return false if @skip
+
+    if $config.mode == 2
+      return @parent_content_id && @parent_content_id.is_a?(Integer) ? true : false
+    end
+
+    @category && @category.is_a?(Integer)
   end
 
   def complient?(url)
