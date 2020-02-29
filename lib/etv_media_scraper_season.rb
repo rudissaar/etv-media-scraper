@@ -1,8 +1,14 @@
 require 'fileutils'
 
+require_relative 'etv_media_scraper_global'
+require_relative 'etv_media_scraper_helper'
+
 # Class that holds season related data.
 class EtvMediaScraperSeason
+  prepend EtvMediaScraperGlobal
+
   attr_accessor :name, :number
+  attr_reader :episode
 
   def initialize(options = {})
     @allowed_options = %w[name number episode]
@@ -26,7 +32,10 @@ class EtvMediaScraperSeason
       parts.push('S' << format('%02d', @number)) if @number
     end
 
-    parts.join('.')
+    name = parts.join('.')
+    name << '-' << $config.output_options['signature'] if $config.output_options['signature']
+
+    name
   end
 
   def final_loot_path

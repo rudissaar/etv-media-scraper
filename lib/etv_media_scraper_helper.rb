@@ -1,8 +1,8 @@
 require 'openssl'
 require 'uri'
 
-# Class that provides shared helper functions.
-class EtvMediaScraperHelper
+# Module that provides shared helper functions.
+module EtvMediaScraperHelper
   def self.http_options(url)
     uri = URI(url)
     options = { options: {} }
