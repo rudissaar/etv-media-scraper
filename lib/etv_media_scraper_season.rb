@@ -33,7 +33,7 @@ class EtvMediaScraperSeason
     end
 
     name = parts.join('.')
-    name << '-' << $config.output_options['signature'] if $config.output_options['signature']
+    name << '-' << $config.signature if $config.signature
 
     name
   end

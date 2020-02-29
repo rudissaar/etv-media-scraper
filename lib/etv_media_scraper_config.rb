@@ -56,4 +56,8 @@ class EtvMediaScraperConfig
 
     options
   end
+
+  def signature
+    output_options['signature']
+  end
 end
