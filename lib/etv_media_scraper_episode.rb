@@ -66,14 +66,6 @@ class EtvMediaScraperEpisode
     File.delete(@destination)
   end
 
-  def assign_final_loot_pathname
-    @final_loot_pathname = @season.final_loot_pathname
-  end
-
-  def assign_final_loot_path
-    @final_loot_path = @season.final_loot_path
-  end
-
   def assign_track_label
     string = ''
 
@@ -105,7 +97,7 @@ class EtvMediaScraperEpisode
 
   def assign_final_loot_file
     assign_final_loot_filename
-    @final_loot_file = File.join(@final_loot_path, @final_loot_filename)
+    @final_loot_file = File.join(@season.final_loot_path, @final_loot_filename)
   end
 
   def before_download
