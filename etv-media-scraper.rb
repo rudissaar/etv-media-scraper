@@ -78,6 +78,7 @@ class EtvMediaScraper
       episode.name = obj['progTitle']
       episode.season = season
 
+      next if @entity.ignore_special_episodes && (episode.number.to_i.zero? || season.number.to_i.zero?)
       @episodes.push(episode)
     end
   end

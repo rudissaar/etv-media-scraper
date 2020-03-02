@@ -7,12 +7,12 @@ class EtvMediaScraperEntity
   prepend EtvMediaScraperGlobal
 
   attr_accessor :name
-  attr_reader :skip, :category, :parent_content_id, :etv2, :referer
+  attr_reader :skip, :category, :parent_content_id, :etv2, :referer, :ignore_special_episodes
 
   def initialize(options)
     @options = options
 
-    allowed_options = %w[name skip category parent_content_id etv2 referer]
+    allowed_options = %w[name skip category parent_content_id etv2 referer ignore_special_episodes]
 
     options.each do |option, value|
       if allowed_options.include?(option)
@@ -38,6 +38,12 @@ class EtvMediaScraperEntity
       source_rules['url_must_exclude'].each do |string_to_exclude|
         @rules[:url_must_exclude].push(string_to_exclude)
       end
+    end
+
+    if source_rules.key?('ignore_special_episodes')
+      value = source_rules['ignore_special_episodes']
+      value = value.to_s == 'true' || value.to_s == '1' ? true : false
+      @ignore_special_episodes = value
     end
   end
 
