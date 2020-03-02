@@ -49,14 +49,19 @@ class EtvMediaScraperEpisode
     end
   end
 
-  def assign_skip_file
-    @skip_file = File.join(@skip_path, File.basename(@url))
+  def assign_skip_files
+    @skip_files = skip_files
   end
 
   def assign_skip
-    return unless File.file?(@skip_file)
-    puts('> Skipping: ' << File.basename(@skip_file)) if @verbose
-    @skip = true
+    skip = false
+
+    @skip_files.each do |skip_file|
+      skip = true if File.file?(skip_file)
+      puts('> Skipping: ' << File.basename(skip_file)) if skip && @verbose
+    end
+
+    @skip = skip
   end
 
   def assign_destination
@@ -100,8 +105,25 @@ class EtvMediaScraperEpisode
     @final_loot_file = File.join(@season.final_loot_path, @final_loot_filename)
   end
 
+  def skip_files
+    files = []
+
+    filename = File.join(@skip_path, File.basename(@url))
+    extenstion = File.extname(filename)
+    basename = File.basename(filename, extenstion)
+
+    files.push(filename)
+
+    if basename.end_with?('ETV1', 'ETV2')
+      possible_duplication = File.join(@skip_path, basename << '_' << '1' << extenstion)
+      files.push(possible_duplication) if File.file?(possible_duplication)
+    end
+
+    files
+  end
+
   def before_download
-    assign_skip_file
+    assign_skip_files
     assign_skip
     return if @skip
 
@@ -121,8 +143,7 @@ class EtvMediaScraperEpisode
   end
 
   def after_download
-    FileUtils.touch(@skip_file)
-    assign_final_loot_path
+    skip_files.each { |skip_file| FileUtils.touch(skip_file) }
     assign_final_loot_file
     move_to_loot
   end
