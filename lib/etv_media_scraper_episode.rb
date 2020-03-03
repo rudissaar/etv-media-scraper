@@ -107,15 +107,11 @@ class EtvMediaScraperEpisode
 
   def skip_files
     files = []
+    parts = EtvMediaScraperHelper.filename_parts(@url)
+    files.push(File.join(@skip_path, parts[:filename]))
 
-    filename = File.join(@skip_path, File.basename(@url))
-    extenstion = File.extname(filename)
-    basename = File.basename(filename, extenstion)
-
-    files.push(filename)
-
-    if basename.end_with?('ETV1', 'ETV2')
-      possible_duplication = File.join(@skip_path, basename << '_' << '1' << extenstion)
+    if parts[:basename].end_with?('ETV1', 'ETV2')
+      possible_duplication = File.join(@skip_path, parts[:basename] << '_' << '1' << parts[:extension])
       files.push(possible_duplication) if File.file?(possible_duplication)
     end
 

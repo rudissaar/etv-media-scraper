@@ -26,12 +26,21 @@ module EtvMediaScraperHelper
     string
   end
 
-  def self.add_signature_to_filename(filename, signature)
-    directory = File.dirname(filename)
-    extension = File.extname(filename)
-    basename = File.basename(filename, extension)
+  def self.filename_parts(filename)
+    parts = {}
 
-    name = basename << '-' << signature << extension
-    File.join(directory, name)
+    parts[:filename] = File.basename(filename)
+    parts[:directory] = File.dirname(filename)
+    parts[:extension] = File.extname(filename)
+    parts[:basename] = File.basename(filename, parts[:extension])
+
+    parts
+  end
+
+  def self.add_signature_to_filename(filename, signature)
+    parts = filename_parts(filename)
+    name = parts[:basename] << '-' << signature << parts[:extension]
+
+    File.join(parts[:directory], name)
   end
 end
