@@ -3,8 +3,8 @@
 require 'fileutils'
 require 'json'
 require 'net/https'
-require 'time'
 
+require_relative File.join('lib', 'etv_media_scraper_constants')
 require_relative File.join('lib', 'etv_media_scraper_entity')
 require_relative File.join('lib', 'etv_media_scraper_episode')
 require_relative File.join('lib', 'etv_media_scraper_global')
@@ -18,11 +18,6 @@ class EtvMediaScraper
   def initialize
     assign_selector_param
     assign_selector_key
-
-    @etv_api_url = 'https://etv.err.ee/api/tv/getCategoryPastShows?' << @selector_param
-    @etv2_api_url = 'https://etv2.err.ee/api/tv/getCategoryPastShows?' << @selector_param
-    @api_params_ts_string = '&periodStart=0&periodEnd=' + Time.now.to_i.to_s
-    @api_params_string = '&fullData=1'
 
     $config.create_entities
     @entities = $config.entities
@@ -45,15 +40,12 @@ class EtvMediaScraper
   end
 
   def build_resource_url
-    url = @entity.etv2 ? @etv2_api_url : @etv_api_url
+    url = @entity.etv2 ? EtvMediaScraperConstants::ETV2_API_URL.dup : EtvMediaScraperConstants::ETV_API_URL.dup
+    url << @selector_param
     url << @entity.instance_variable_get("@#{@selector_key}").to_s
-    url << @api_params_string
+    url << EtvMediaScraperConstants::API_PARAMS_STRING
 
     url
-  end
-
-  def resource_http_options
-    EtvMediaScraperHelper.http_options(@resource_url)
   end
 
   def parse_resource
@@ -84,7 +76,7 @@ class EtvMediaScraper
   end
 
   def fetch_resource
-    options = resource_http_options
+    options = EtvMediaScraperHelper.http_options(@resource_url)
 
     Net::HTTP.start(options[:uri].host, options[:uri].port, options[:options]) do |http|
       request = Net::HTTP::Get.new(options[:uri].request_uri)
