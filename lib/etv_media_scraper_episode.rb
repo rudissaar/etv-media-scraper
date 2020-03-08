@@ -112,7 +112,12 @@ class EtvMediaScraperEpisode
 
     match = parts[:basename].match(/ETV(?:1|2)_(\d?)\z/)
     digit = match ? match.captures.last.to_i : nil
-    numbers.delete(digit) if digit
+
+    if digit
+      numbers.delete(digit)
+      duplication = File.join(@skip_path, parts[:basename].delete_suffix('_' << digit.to_s) << parts[:extension])
+      files.push(duplication) if File.file?(duplication)
+    end
 
     numbers.each do |number|
       duplication = File.join(@skip_path, parts[:basename] << '_' << number.to_s << parts[:extension])
