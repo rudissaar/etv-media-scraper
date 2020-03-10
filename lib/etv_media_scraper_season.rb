@@ -8,7 +8,7 @@ class EtvMediaScraperSeason
   prepend EtvMediaScraperOutputOptions
 
   attr_accessor :name, :number
-  attr_reader :episode
+  attr_reader :episode, :signature
 
   def initialize(options = {})
     @allowed_options = %w[name number episode signature]

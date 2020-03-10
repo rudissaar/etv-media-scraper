@@ -61,9 +61,9 @@ class EtvMediaScraper
 
       next unless episode.url
 
-      season = EtvMediaScraperSeason.new
-      season.name = @entity.name
-      season.number = obj['season'].to_i
+      season_options = { 'name' => @entity.name, 'number' => obj['season'].to_i }
+      season_options['signature'] = @entity.signature if @entity.signature
+      season = EtvMediaScraperSeason.new(season_options)
       season.episode = episode
 
       episode.number = EtvMediaScraperHelper.parse_episode_number(obj['shortNumberInfo'])

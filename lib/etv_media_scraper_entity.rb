@@ -1,21 +1,23 @@
 require 'fileutils'
 
 require_relative 'etv_media_scraper_global'
+require_relative 'etv_media_scraper_output_options'
 
 # Class that handles task related data and logic.
 class EtvMediaScraperEntity
   prepend EtvMediaScraperGlobal
+  prepend EtvMediaScraperOutputOptions
 
   attr_accessor :name
-  attr_reader :skip, :category, :parent_content_id, :etv2, :referer, :ignore_special_episodes
+  attr_reader :skip, :category, :parent_content_id, :etv2, :referer, :ignore_special_episodes, :signature
 
   def initialize(options)
     @options = options
+    @allowed_options = %w[name skip category parent_content_id etv2 referer ignore_special_episodes signature]
 
-    allowed_options = %w[name skip category parent_content_id etv2 referer ignore_special_episodes]
-
+    output_options
     options.each do |option, value|
-      if allowed_options.include?(option)
+      if @allowed_options.include?(option)
         instance_variable_set("@#{option}", value) unless value.nil?
       end
     end
