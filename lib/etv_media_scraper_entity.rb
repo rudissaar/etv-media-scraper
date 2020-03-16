@@ -2,6 +2,7 @@ require 'fileutils'
 
 require_relative 'etv_media_scraper_global'
 require_relative 'etv_media_scraper_output_options'
+require_relative 'etv_media_scraper_season'
 
 # Class that handles task related data and logic.
 class EtvMediaScraperEntity
@@ -23,6 +24,13 @@ class EtvMediaScraperEntity
     end
 
     rules
+  end
+
+  def create_season(options = {})
+    options['name'] = @name
+    options['signature'] = @signature if @signature
+
+    EtvMediaScraperSeason.new(options)
   end
 
   def rules
