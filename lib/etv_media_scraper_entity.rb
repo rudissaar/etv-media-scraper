@@ -12,7 +12,8 @@ class EtvMediaScraperEntity
   attr_accessor :name
   attr_reader :skip, :category, :parent_content_id, :etv2, :referer, :ignore_special_episodes, :signature
 
-  def initialize(options)
+  def initialize(options = {})
+    options = options.transform_keys(&:to_s)
     @options = options
     @allowed_options = %w[name skip category parent_content_id etv2 referer ignore_special_episodes signature]
 
@@ -27,6 +28,7 @@ class EtvMediaScraperEntity
   end
 
   def create_season(options = {})
+    options = options.transform_keys(&:to_s)
     options['name'] = @name
     options['signature'] = @signature if @signature
 

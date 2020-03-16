@@ -11,6 +11,7 @@ class EtvMediaScraperSeason
   attr_reader :episode, :signature
 
   def initialize(options = {})
+    options = options.transform_keys(&:to_s)
     @allowed_options = %w[name number episode signature]
 
     output_options

@@ -64,7 +64,7 @@ class EtvMediaScraper
       episode_options['name'] = obj['progTitle']
       episode_options['signature'] = @entity.signature if @entity.signature
 
-      season = @entity.create_season({ 'number' => obj['season'].to_i })
+      season = @entity.create_season(number: obj['season'].to_i)
       episode = EtvMediaScraperEpisode.new(episode_options)
 
       season.episode = episode
