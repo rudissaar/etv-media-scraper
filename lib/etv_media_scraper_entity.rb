@@ -1,34 +1,29 @@
 require 'fileutils'
 
 require_relative 'etv_media_scraper_global'
+require_relative 'etv_media_scraper_init_options'
 require_relative 'etv_media_scraper_output_options'
 require_relative 'etv_media_scraper_season'
 
 # Class that handles task related data and logic.
 class EtvMediaScraperEntity
   prepend EtvMediaScraperGlobal
+  prepend EtvMediaScraperInitOptions
   prepend EtvMediaScraperOutputOptions
 
   attr_accessor :name
   attr_reader :skip, :category, :parent_content_id, :etv2, :referer, :ignore_special_episodes, :signature
 
   def initialize(options = {})
-    options = options.transform_keys(&:to_s)
-    @options = options
     @allowed_options = %w[name skip category parent_content_id etv2 referer ignore_special_episodes signature]
 
     output_options
-    options.each do |option, value|
-      if @allowed_options.include?(option)
-        instance_variable_set("@#{option}", value) unless value.nil?
-      end
-    end
+    @options = init_options(options)
 
     rules
   end
 
   def create_season(options = {})
-    options = options.transform_keys(&:to_s)
     options['name'] = @name
     options['signature'] = @signature if @signature
 
