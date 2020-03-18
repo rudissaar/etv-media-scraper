@@ -18,7 +18,7 @@ class EtvMediaScraperEntity
     @allowed_options = %w[name skip category parent_content_id etv2 referer ignore_special_episodes signature]
 
     output_options
-    @options = init_options(options)
+    @options = init_options(options, true)
 
     rules
   end

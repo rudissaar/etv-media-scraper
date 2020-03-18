@@ -4,12 +4,14 @@ require 'pathname'
 require_relative 'etv_media_scraper_downloader'
 require_relative 'etv_media_scraper_global'
 require_relative 'etv_media_scraper_helper'
+require_relative 'etv_media_scraper_init_options'
 require_relative 'etv_media_scraper_output_options'
 require_relative 'etv_media_scraper_season'
 
 # Class that holds data and logic for media.
 class EtvMediaScraperEpisode
   prepend EtvMediaScraperGlobal
+  prepend EtvMediaScraperInitOptions
   prepend EtvMediaScraperOutputOptions
 
   attr_accessor :number, :name, :url, :verbose
@@ -21,11 +23,7 @@ class EtvMediaScraperEpisode
     @verbose = true
 
     output_options
-    options.each do |option, value|
-      if @allowed_options.include?(option)
-        instance_variable_set("@#{option}", value) unless value.nil?
-      end
-    end
+    init_options(options)
 
     assign_and_create_paths
   end
