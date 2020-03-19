@@ -6,6 +6,7 @@ require_relative 'etv_media_scraper_global'
 require_relative 'etv_media_scraper_helper'
 require_relative 'etv_media_scraper_init_options'
 require_relative 'etv_media_scraper_output_options'
+require_relative 'etv_media_scraper_season'
 
 # Class that holds data and logic for media.
 class EtvMediaScraperEpisode
@@ -13,11 +14,11 @@ class EtvMediaScraperEpisode
   prepend EtvMediaScraperInitOptions
   prepend EtvMediaScraperOutputOptions
 
-  attr_accessor :number, :name, :url, :verbose
+  attr_accessor :number, :name, :url, :verbose, :season
   attr_reader :loot_path
 
   def initialize(options = {})
-    @allowed_options = %w[name url season number verbose signature]
+    @allowed_options = %w[name url number verbose signature]
     @paths = %w[skip tmp loot]
     @verbose = true
 

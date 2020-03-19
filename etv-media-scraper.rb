@@ -6,6 +6,7 @@ require 'net/https'
 
 require_relative File.join('lib', 'etv_media_scraper_constants')
 require_relative File.join('lib', 'etv_media_scraper_entity')
+require_relative File.join('lib', 'etv_media_scraper_entity_resource')
 require_relative File.join('lib', 'etv_media_scraper_global')
 require_relative File.join('lib', 'etv_media_scraper_helper')
 
@@ -48,7 +49,9 @@ class EtvMediaScraper
 
   def parse_resource
     @resource.each do |obj|
-      @entity.name = obj['primaryCategory']['name'] unless @entity.name
+      entity_resource = EtvMediaScraperEntityResource.new(obj)
+      @entity.name = entity_resource.name unless @entity.name
+
       episode_options = {}
 
       obj['medias'].each do |media|
