@@ -6,7 +6,6 @@ require_relative 'etv_media_scraper_global'
 require_relative 'etv_media_scraper_helper'
 require_relative 'etv_media_scraper_init_options'
 require_relative 'etv_media_scraper_output_options'
-require_relative 'etv_media_scraper_season'
 
 # Class that holds data and logic for media.
 class EtvMediaScraperEpisode

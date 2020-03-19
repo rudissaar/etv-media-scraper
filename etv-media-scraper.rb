@@ -6,10 +6,8 @@ require 'net/https'
 
 require_relative File.join('lib', 'etv_media_scraper_constants')
 require_relative File.join('lib', 'etv_media_scraper_entity')
-require_relative File.join('lib', 'etv_media_scraper_episode')
 require_relative File.join('lib', 'etv_media_scraper_global')
 require_relative File.join('lib', 'etv_media_scraper_helper')
-require_relative File.join('lib', 'etv_media_scraper_season')
 
 # Bootstrap class that connects everything together.
 class EtvMediaScraper
@@ -65,10 +63,7 @@ class EtvMediaScraper
       episode_options['signature'] = @entity.signature if @entity.signature
 
       season = @entity.create_season(number: obj['season'].to_i)
-      episode = EtvMediaScraperEpisode.new(episode_options)
-
-      season.episode = episode
-      episode.season = season
+      episode = season.create_episode(episode_options)
 
       next if @entity.ignore_special_episodes && (episode.number.to_i.zero? || season.number.to_i.zero?)
       @episodes.push(episode)

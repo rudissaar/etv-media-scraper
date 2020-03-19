@@ -2,6 +2,7 @@ require 'fileutils'
 
 require_relative 'etv_media_scraper_helper'
 require_relative 'etv_media_scraper_init_options'
+require_relative 'etv_media_scraper_episode'
 require_relative 'etv_media_scraper_output_options'
 
 # Class that holds season related data.
@@ -19,8 +20,11 @@ class EtvMediaScraperSeason
     init_options(options)
   end
 
-  def episode=(episode_instance)
-    @episode = episode_instance if episode_instance.is_a?(EtvMediaScraperEpisode)
+  def create_episode(options = {})
+    @episode = EtvMediaScraperEpisode.new(options)
+    @episode.season = self
+
+    @episode
   end
 
   def final_loot_pathname
