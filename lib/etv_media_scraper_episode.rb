@@ -14,8 +14,8 @@ class EtvMediaScraperEpisode
   prepend EtvMediaScraperInitOptions
   prepend EtvMediaScraperOutputOptions
 
-  attr_accessor :number, :name, :url, :verbose, :season
-  attr_reader :loot_path
+  attr_accessor :number, :name, :url, :verbose
+  attr_reader :loot_path, :season
 
   def initialize(options = {})
     @allowed_options = %w[name url number verbose signature]
@@ -65,7 +65,7 @@ class EtvMediaScraperEpisode
   def assign_track_label
     string = ''
 
-    string << @season.name << '.' unless @season.to_s.strip.empty?
+    string << @season.name << '.' unless @season.name.to_s.strip.empty?
     string << 'S' << format('%02d', @season.number) unless @season.number.to_s.strip.empty?
     string << 'E' << format('%02d', @number) unless @number.to_s.strip.empty?
 

@@ -48,24 +48,20 @@ class EtvMediaScraper
   end
 
   def parse_resource
-    @resource.each do |obj|
-      entity_resource = EtvMediaScraperEntityResource.new(obj)
+    @resource.each do |object|
+      entity_resource = EtvMediaScraperEntityResource.new(object)
       @entity.name = entity_resource.name unless @entity.name
 
       episode_options = {}
-
-      obj['medias'].each do |media|
-        url = 'https:' << media['src']['file']
-        episode_options['url'] = url if @entity.complient?(url)
-      end
+      episode_options['url'] = entity_resource.url if @entity.complient?(entity_resource.url)
 
       next unless episode_options['url']
 
-      episode_options['number'] = EtvMediaScraperHelper.parse_episode_number(obj['shortNumberInfo'])
-      episode_options['name'] = obj['progTitle']
+      episode_options['number'] = EtvMediaScraperHelper.parse_episode_number(object['shortNumberInfo'])
+      episode_options['name'] = object['progTitle']
       episode_options['signature'] = @entity.signature if @entity.signature
 
-      season = @entity.create_season(number: obj['season'].to_i)
+      season = @entity.create_season(number: object['season'].to_i)
       episode = season.create_episode(episode_options)
 
       next if @entity.ignore_special_episodes && (episode.number.to_i.zero? || season.number.to_i.zero?)
