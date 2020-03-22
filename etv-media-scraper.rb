@@ -57,7 +57,7 @@ class EtvMediaScraper
 
       next unless episode_options['url']
 
-      episode_options['number'] = EtvMediaScraperHelper.parse_episode_number(object['shortNumberInfo'])
+      episode_options['number'] = entity_resource.episode_number
       episode_options['name'] = object['progTitle']
       episode_options['signature'] = @entity.signature if @entity.signature
 

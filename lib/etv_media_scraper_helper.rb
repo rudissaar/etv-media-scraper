@@ -14,11 +14,6 @@ module EtvMediaScraperHelper
     options
   end
 
-  def self.parse_episode_number(heading)
-    match = heading.to_s.match(/(?:O|Osa):\s(\d+)/)
-    match ? match.captures.last.to_i : nil
-  end
-
   def self.dotify_string(string)
     string.tr!(',.!:@', '')
     string.tr!(' ', '.')
