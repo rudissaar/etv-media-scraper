@@ -51,8 +51,9 @@ class EtvMediaScraperConfig
     options = {}
 
     return options unless @data.key?('output')
-    output_options = @data['output']
-    options['signature'] = output_options['signature'] if output_options.key?('signature')
+
+    options['signature'] = @data['output']['signature'] if @data['output'].key?('signature')
+    options['episode_padding'] = @data['output']['episode_padding'].to_i if @data['output'].key?('episode_padding')
 
     options
   end
