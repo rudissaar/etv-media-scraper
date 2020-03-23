@@ -58,10 +58,10 @@ class EtvMediaScraper
       next unless episode_options['url']
 
       episode_options['number'] = entity_resource.episode_number
-      episode_options['name'] = object['progTitle']
+      episode_options['name'] = entity_resource.episode_name
       episode_options['signature'] = @entity.signature if @entity.signature
 
-      season = @entity.create_season(number: object['season'].to_i)
+      season = @entity.create_season(number: entity_resource.season_number)
       episode = season.create_episode(episode_options)
 
       next if @entity.ignore_special_episodes && (episode.number.to_i.zero? || season.number.to_i.zero?)
