@@ -13,7 +13,8 @@
         "url_must_exclude": [
           "etvvideod"
         ]
-      }
+      },
+      "signature": "Anonymous"
     },
     {
       "skip": true,
