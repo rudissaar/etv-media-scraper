@@ -65,6 +65,8 @@ class EtvMediaScraperEntity
   end
 
   def complient?(url)
+    return false if url.nil? || url.to_s.strip.empty?
+
     @rules[:url_must_exclude].each do |string_to_exclude|
       return false if url[string_to_exclude]
     end
