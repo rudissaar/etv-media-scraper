@@ -60,6 +60,7 @@ class EtvMediaScraper
       episode_options['number'] = entity_resource.episode_number
       episode_options['name'] = entity_resource.episode_name
       episode_options['signature'] = @entity.signature if @entity.signature
+      episode_options['episode_padding'] = @entity.episode_padding if @entity.episode_padding
 
       season = @entity.create_season(number: entity_resource.season_number)
       episode = season.create_episode(episode_options)

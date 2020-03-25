@@ -12,10 +12,13 @@ class EtvMediaScraperEntity
   prepend EtvMediaScraperOutputOptions
 
   attr_accessor :name
-  attr_reader :skip, :category, :parent_content_id, :etv2, :referer, :ignore_special_episodes, :signature
+  attr_reader :skip, :category, :parent_content_id, :etv2, :referer, :ignore_special_episodes, :signature,
+              :episode_padding
 
   def initialize(options = {})
-    @allowed_options = %w[name skip category parent_content_id etv2 referer ignore_special_episodes signature]
+    @allowed_options = %w[
+      name skip category parent_content_id etv2 referer ignore_special_episodes signature episode_padding
+    ]
 
     output_options
     @options = init_options(options, true)
