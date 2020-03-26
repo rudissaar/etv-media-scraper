@@ -43,4 +43,16 @@ class EtvMediaScraperEntityResource
     return unless @object.key?('progTitle')
     @episode_name = @object['progTitle']
   end
+
+  def episode_options(entity)
+    options = {}
+
+    options['url'] = @url if entity.complient?(@url)
+    options['number'] = @episode_number
+    options['name'] = @episode_name
+    options['signature'] = entity.signature if entity.signature
+    options['episode_padding'] = entity.episode_padding if entity.episode_padding
+
+    options
+  end
 end
