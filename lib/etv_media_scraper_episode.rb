@@ -18,8 +18,9 @@ class EtvMediaScraperEpisode
   attr_reader :loot_path, :season
 
   def initialize(options = {})
-    @allowed_options = %w[name url number verbose signature episode_padding]
+    @allowed_options = %w[name url number verbose signature episode_names episode_padding]
     @paths = %w[skip tmp loot]
+    @episode_names = true
     @episode_padding = 2
     @verbose = true
 
@@ -77,7 +78,7 @@ class EtvMediaScraperEpisode
     assign_track_label
 
     parts = []
-    parts.push(EtvMediaScraperHelper.dotify_string(@name)) unless @name.to_s.strip.empty?
+    parts.push(EtvMediaScraperHelper.dotify_string(@name)) if !@name.to_s.strip.empty? && @episode_names
     parts.unshift(@track_label) unless @track_label.to_s.strip.empty?
 
     if parts.empty?
