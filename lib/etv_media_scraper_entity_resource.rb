@@ -51,6 +51,7 @@ class EtvMediaScraperEntityResource
     options['number'] = @episode_number
     options['name'] = @episode_name
     options['signature'] = entity.signature if entity.signature
+    options['episode_names'] = entity.episode_names if entity.episode_names
     options['episode_padding'] = entity.episode_padding if entity.episode_padding
 
     options
