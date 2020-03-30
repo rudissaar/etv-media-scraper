@@ -14,19 +14,20 @@ class EtvMediaScraperDownloader
   attr_accessor :url, :destination, :verbose
 
   def initialize
+    @allowed_options = %w[use_wget wget_path verbose]
     @verbose = true
 
-    allowed_options = %w[use_wget verbose]
-
     $config.downloader_options.each do |option, value|
-      if allowed_options.include?(option)
+      if @allowed_options.include?(option)
         instance_variable_set("@#{option}", value) unless value.nil?
       end
     end
   end
 
   def wget_command
-    argv = Shellwords.split('wget')
+    wget_path = @wget_path ? @wget_path : 'wget'
+
+    argv = Shellwords.split(wget_path)
     argv << Shellwords.escape(@url)
     argv << Shellwords.split('-O')
     argv << Shellwords.escape(@destination)

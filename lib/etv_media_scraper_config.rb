@@ -43,6 +43,7 @@ class EtvMediaScraperConfig
     return options unless @data.key?('downloader')
     downloader_options = @data['downloader']
     options['use_wget'] = downloader_options['use_wget'] if downloader_options.key?('use_wget')
+    options['wget_path'] = downloader_options['wget_path'] if downloader_options.key?('wget_path')
 
     options
   end
