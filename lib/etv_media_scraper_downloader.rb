@@ -4,12 +4,12 @@ require 'progressbar'
 require 'shellwords'
 require 'uri'
 
-require_relative 'etv_media_scraper_global'
+require_relative 'etv_media_scraper_downloader_options'
 require_relative 'etv_media_scraper_helper'
 
 # Class that handles downloading media files.
 class EtvMediaScraperDownloader
-  prepend EtvMediaScraperGlobal
+  prepend EtvMediaScraperDownloaderOptions
 
   attr_accessor :url, :destination, :verbose
 
@@ -17,11 +17,7 @@ class EtvMediaScraperDownloader
     @allowed_options = %w[use_wget wget_path verbose]
     @verbose = true
 
-    $config.downloader_options.each do |option, value|
-      if @allowed_options.include?(option)
-        instance_variable_set("@#{option}", value) unless value.nil?
-      end
-    end
+    downloader_options
   end
 
   def wget_command
