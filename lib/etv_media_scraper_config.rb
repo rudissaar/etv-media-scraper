@@ -40,10 +40,12 @@ class EtvMediaScraperConfig
   def downloader_options
     options = {}
 
-    return options unless @data.key?('downloader')
-    downloader_options = @data['downloader']
-    options['use_wget'] = downloader_options['use_wget'] if downloader_options.key?('use_wget')
-    options['wget_path'] = downloader_options['wget_path'] if downloader_options.key?('wget_path')
+    return options unless @data.key?('downloader') || @data['downloader'].is_a?(Hash)
+    allowed_options = %w[use_wget wget_path]
+
+    @data['downloader'].each do |option, value|
+      options[option] = @data['downloader'][option] = value if allowed_options.include?(option)
+    end
 
     options
   end
@@ -51,11 +53,12 @@ class EtvMediaScraperConfig
   def output_options
     options = {}
 
-    return options unless @data.key?('output')
+    return options unless @data.key?('output') || @data['output'].is_a?(Hash)
+    allowed_options = %w[signature episode_names episode_padding]
 
-    options['signature'] = @data['output']['signature'] if @data['output'].key?('signature')
-    options['episode_names'] = @data['output']['episode_names'] if @data['output'].key?('episode_names')
-    options['episode_padding'] = @data['output']['episode_padding'].to_i if @data['output'].key?('episode_padding')
+    @data['output'].each do |option, value|
+      options[option] = @data['output'][option] = value if allowed_options.include?(option)
+    end
 
     options
   end
