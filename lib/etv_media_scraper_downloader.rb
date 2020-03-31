@@ -20,9 +20,14 @@ class EtvMediaScraperDownloader
     downloader_options
   end
 
-  def wget_command
-    wget_path = @wget_path ? @wget_path : 'wget'
+  def wget_path
+    path = 'wget'
+    path = @wget_path if @wget_path && File.exist?(@wget_path) && File.executable?(@wget_path)
 
+    path
+  end
+
+  def wget_command
     argv = Shellwords.split(wget_path)
     argv << Shellwords.escape(@url)
     argv << Shellwords.split('-O')
