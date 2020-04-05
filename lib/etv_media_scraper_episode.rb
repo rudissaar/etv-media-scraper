@@ -34,6 +34,11 @@ class EtvMediaScraperEpisode
     @season = season_instance if season_instance.is_a?(EtvMediaScraperSeason)
   end
 
+  def source_type
+    parts = EtvMediaScraperHelper.filename_parts(@url)
+    parts['extension'] == '.m3u8' ? 'WEBRip' : 'WEB'
+  end
+
   def assign_and_create_paths
     @paths.each do |path|
       joined_path = File.join(__dir__, '..', path)
