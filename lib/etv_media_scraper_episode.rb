@@ -70,12 +70,15 @@ class EtvMediaScraperEpisode
   end
 
   def assign_track_label
-    string = ''
+    parts = []
+    parts.push(@season.name) unless @season.name.to_s.strip.empty?
 
-    string << @season.name << '.' unless @season.name.to_s.strip.empty?
-    string << 'S' << format('%02d', @season.number) unless @season.number.to_s.strip.empty?
-    string << 'E' << format("%0#{@episode_padding}d", @number) unless @number.to_s.strip.empty?
+    number_string = ''
+    number_string << 'S' << format('%02d', @season.number) unless @season.number.to_s.strip.empty?
+    number_string << 'E' << format("%0#{@episode_padding}d", @number) unless @number.to_s.strip.empty?
+    parts.push(number_string) unless number_string.empty?
 
+    string = parts.join('.')
     @track_label = string
   end
 
