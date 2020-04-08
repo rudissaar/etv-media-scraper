@@ -69,7 +69,7 @@ class EtvMediaScraperEpisode
     File.delete(@destination)
   end
 
-  def assign_track_label
+  def track_label
     parts = []
     parts.push(@season.name) unless @season.name.to_s.strip.empty?
 
@@ -78,16 +78,13 @@ class EtvMediaScraperEpisode
     number_string << 'E' << format("%0#{@episode_padding}d", @number) unless @number.to_s.strip.empty?
     parts.push(number_string) unless number_string.empty?
 
-    string = parts.join('.')
-    @track_label = string
+    parts.join('.')
   end
 
   def assign_final_loot_filename
-    assign_track_label
-
     parts = []
     parts.push(EtvMediaScraperHelper.dotify_string(@name)) if !@name.to_s.strip.empty? && @episode_names
-    parts.unshift(@track_label) unless @track_label.to_s.strip.empty?
+    parts.unshift(track_label) unless track_label.to_s.strip.empty?
 
     if parts.empty?
       parts.push(File.basename(@url))
