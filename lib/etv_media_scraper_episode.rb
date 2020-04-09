@@ -78,6 +78,8 @@ class EtvMediaScraperEpisode
     number_string << 'E' << format("%0#{@episode_padding}d", @number) unless @number.to_s.strip.empty?
     parts.push(number_string) unless number_string.empty?
 
+    parts.push(source_type) unless source_type.empty?
+
     parts.join('.')
   end
 
