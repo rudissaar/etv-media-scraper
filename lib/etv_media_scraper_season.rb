@@ -35,6 +35,8 @@ class EtvMediaScraperSeason
       parts.push('S' << format('%02d', @number)) if @number
     end
 
+    parts.push(@episode.source_type) unless @episode.source_type.empty?
+
     name = parts.join('.')
     name << '-' << @signature if @signature
 

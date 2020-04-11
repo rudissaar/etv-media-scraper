@@ -71,13 +71,14 @@ class EtvMediaScraperEpisode
 
   def track_label
     parts = []
+
     parts.push(@season.name) unless @season.name.to_s.strip.empty?
 
     number_string = ''
     number_string << 'S' << format('%02d', @season.number) unless @season.number.to_s.strip.empty?
     number_string << 'E' << format("%0#{@episode_padding}d", @number) unless @number.to_s.strip.empty?
-    parts.push(number_string) unless number_string.empty?
 
+    parts.push(number_string) unless number_string.empty?
     parts.push(source_type) unless source_type.empty?
 
     parts.join('.')
