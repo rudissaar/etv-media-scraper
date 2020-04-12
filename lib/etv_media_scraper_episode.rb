@@ -108,7 +108,7 @@ class EtvMediaScraperEpisode
 
   def skip_files
     parts = EtvMediaScraperHelper.filename_parts(@url)
-    numbers = Array(0..9)
+    numbers = Array(0..4)
     files = [File.join(@skip_path, parts[:filename])]
 
     match = parts[:basename].match(/ETV(?:1|2)_(\d?)\z/)
@@ -116,13 +116,21 @@ class EtvMediaScraperEpisode
 
     if digit
       numbers.delete(digit)
-      duplication = File.join(@skip_path, parts[:basename].delete_suffix('_' << digit.to_s) << parts[:extension])
-      files.push(duplication) if File.file?(duplication)
+      duplication = File.join(@skip_path, parts[:basename].delete_suffix('_' + digit.to_s) + parts[:extension])
+      files.push(duplication) if File.file?(duplication) && !files.include?(duplication)
     end
 
-    numbers.each do |number|
-      duplication = File.join(@skip_path, parts[:basename] << '_' << number.to_s << parts[:extension])
-      files.push(duplication) if File.file?(duplication)
+    [1, 2].each do |channel|
+      basename = parts[:basename]
+      basename = basename.chop if basename.end_with?('ETV1', 'ETV2')
+
+      duplication = File.join(@skip_path, basename + channel.to_s + parts[:extension])
+      files.push(duplication) if File.file?(duplication) && !files.include?(duplication)
+
+      numbers.each do |number|
+        duplication = File.join(@skip_path, basename + channel.to_s + '_' + number.to_s + parts[:extension])
+        files.push(duplication) if File.file?(duplication) && !files.include?(duplication)
+      end
     end
 
     files
