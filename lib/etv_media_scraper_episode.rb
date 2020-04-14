@@ -106,6 +106,15 @@ class EtvMediaScraperEpisode
     @final_loot_file = File.join(@season.final_loot_path, @final_loot_filename)
   end
 
+  def source_index(filename = nil)
+    filename = @url if filename.nil?
+    parts = EtvMediaScraperHelper.filename_parts(filename)
+    match = parts[:basename].match(/(^\d{4}-\d{6}-\d{4})/)
+    index = match ? match.captures.last : nil
+    index = parts[:basename].split('_').first if index.nil?
+    index
+  end
+
   def skip_files
     parts = EtvMediaScraperHelper.filename_parts(@url)
     numbers = Array(0..4)
