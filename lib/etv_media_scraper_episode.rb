@@ -115,6 +115,12 @@ class EtvMediaScraperEpisode
     index
   end
 
+  def skip_index_array
+    index_array = Dir.entries(@skip_path)
+    index_array.reject { |entry| entry == '.' || entry == '..' }
+    index_array.map { |index| source_index(index) }
+  end
+
   def skip_files
     parts = EtvMediaScraperHelper.filename_parts(@url)
     numbers = Array(0..4)
