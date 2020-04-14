@@ -54,10 +54,8 @@ class EtvMediaScraperEpisode
   def assign_skip
     skip = false
 
-    @skip_files.each do |skip_file|
-      skip = true if File.file?(skip_file)
-      puts('> Skipping: ' << File.basename(skip_file)) if skip && @verbose
-    end
+    skip = skip_index_array.include?(source_index)
+    puts('> Skipping: ' << File.basename(skip_file)) if skip && @verbose
 
     @skip = skip
   end
@@ -121,38 +119,12 @@ class EtvMediaScraperEpisode
     index_array.map { |index| source_index(index) }
   end
 
-  def skip_files
+  def skip_file
     parts = EtvMediaScraperHelper.filename_parts(@url)
-    numbers = Array(0..4)
-    files = [File.join(@skip_path, parts[:filename])]
-
-    match = parts[:basename].match(/ETV(?:1|2)_(\d?)\z/)
-    digit = match ? match.captures.last.to_i : nil
-
-    if digit
-      numbers.delete(digit)
-      duplication = File.join(@skip_path, parts[:basename].delete_suffix('_' + digit.to_s) + parts[:extension])
-      files.push(duplication) if File.file?(duplication) && !files.include?(duplication)
-    end
-
-    [1, 2].each do |channel|
-      basename = parts[:basename]
-      basename = basename.chop if basename.end_with?('ETV1', 'ETV2')
-
-      duplication = File.join(@skip_path, basename + channel.to_s + parts[:extension])
-      files.push(duplication) if File.file?(duplication) && !files.include?(duplication)
-
-      numbers.each do |number|
-        duplication = File.join(@skip_path, basename + channel.to_s + '_' + number.to_s + parts[:extension])
-        files.push(duplication) if File.file?(duplication) && !files.include?(duplication)
-      end
-    end
-
-    files
+    File.join(@skip_path, parts[:filename])
   end
 
   def before_download
-    assign_skip_files
     assign_skip
     return if @skip
 
@@ -172,7 +144,7 @@ class EtvMediaScraperEpisode
   end
 
   def after_download
-    skip_files.each { |skip_file| FileUtils.touch(skip_file) }
+    FileUtils.touch(skip_file)
     assign_final_loot_file
     move_to_loot
   end
