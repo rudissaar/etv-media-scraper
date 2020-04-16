@@ -47,17 +47,10 @@ class EtvMediaScraperEpisode
     end
   end
 
-  def assign_skip_files
-    @skip_files = skip_files
-  end
-
-  def assign_skip
-    skip = false
-
-    skip = skip_index_array.include?(source_index)
-    puts('> Skipping: ' << File.basename(skip_file)) if skip && @verbose
-
-    @skip = skip
+  def skip
+    value = skip_index_array.include?(source_index)
+    puts('> Skipping: ' << File.basename(skip_file)) if value && @verbose
+    value
   end
 
   def assign_destination
@@ -125,16 +118,14 @@ class EtvMediaScraperEpisode
   end
 
   def before_download
-    assign_skip
-    return if @skip
-
+    return if skip
     assign_destination
   end
 
   def download
     before_download
 
-    return if @skip
+    return if skip
     downloader = EtvMediaScraperDownloader.new
     downloader.url = @url
     downloader.destination = @destination
