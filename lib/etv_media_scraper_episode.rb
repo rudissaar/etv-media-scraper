@@ -48,9 +48,7 @@ class EtvMediaScraperEpisode
   end
 
   def skip
-    value = skip_index_array.include?(source_index)
-    puts('> Skipping: ' << File.basename(skip_file)) if value && @verbose
-    value
+    skip_index_array.include?(source_index)
   end
 
   def assign_destination
@@ -125,7 +123,11 @@ class EtvMediaScraperEpisode
   def download
     before_download
 
-    return if skip
+    if skip
+      puts('> Skipping: ' << File.basename(skip_file)) if @verbose
+      return
+    end
+
     downloader = EtvMediaScraperDownloader.new
     downloader.url = @url
     downloader.destination = @destination
