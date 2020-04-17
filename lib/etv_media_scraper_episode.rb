@@ -73,7 +73,7 @@ class EtvMediaScraperEpisode
     parts.join('.')
   end
 
-  def assign_final_loot_filename
+  def final_loot_filename
     parts = []
     parts.push(EtvMediaScraperHelper.dotify_string(@name)) if !@name.to_s.strip.empty? && @episode_names
     parts.unshift(track_label) unless track_label.to_s.strip.empty?
@@ -87,12 +87,11 @@ class EtvMediaScraperEpisode
     name = parts.join('.')
     name = EtvMediaScraperHelper.add_signature_to_filename(name, @signature) unless @signature.to_s.strip.empty?
 
-    @final_loot_filename = name
+    name
   end
 
-  def assign_final_loot_file
-    assign_final_loot_filename
-    @final_loot_file = File.join(@season.final_loot_path, @final_loot_filename)
+  def final_loot_file
+    File.join(@season.final_loot_path, final_loot_filename)
   end
 
   def source_index(filename = nil)
@@ -138,11 +137,6 @@ class EtvMediaScraperEpisode
 
   def after_download
     FileUtils.touch(skip_file)
-    assign_final_loot_file
-    move_to_loot
-  end
-
-  def move_to_loot
-    FileUtils.mv(@destination, @final_loot_file)
+    FileUtils.mv(@destination, final_loot_file)
   end
 end
