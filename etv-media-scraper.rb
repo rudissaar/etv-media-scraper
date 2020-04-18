@@ -3,6 +3,7 @@
 require 'fileutils'
 require 'json'
 require 'net/https'
+require 'time'
 
 require_relative File.join('lib', 'etv_media_scraper_constants')
 require_relative File.join('lib', 'etv_media_scraper_entity')
@@ -31,19 +32,17 @@ class EtvMediaScraper
   end
 
   def process_entity
-    @resource_url = build_resource_url
     @episodes = []
-
     fetch_resource
     @episodes.each(&:download)
   end
 
-  def build_resource_url
+  def resource_url
     url = @entity.etv2 ? EtvMediaScraperConstants::ETV2_API_URL.dup : EtvMediaScraperConstants::ETV_API_URL.dup
     url << @selector_param
     url << @entity.instance_variable_get("@#{@selector_key}").to_s
+    url << EtvMediaScraperConstants::API_PARAMS_TS_STRING << Time.new.to_i.to_s
     url << EtvMediaScraperConstants::API_PARAMS_STRING
-
     url
   end
 
@@ -64,7 +63,7 @@ class EtvMediaScraper
   end
 
   def fetch_resource
-    options = EtvMediaScraperHelper.http_options(@resource_url)
+    options = EtvMediaScraperHelper.http_options(resource_url)
 
     Net::HTTP.start(options[:uri].host, options[:uri].port, options[:options]) do |http|
       request = Net::HTTP::Get.new(options[:uri].request_uri)
