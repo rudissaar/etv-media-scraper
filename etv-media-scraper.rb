@@ -16,19 +16,16 @@ class EtvMediaScraper
   prepend EtvMediaScraperGlobal
 
   def initialize
-    assign_selector_param
-    assign_selector_key
-
     $config.create_entities
     @entities = $config.entities
   end
 
-  def assign_selector_param
-    @selector_param = $config.mode == 2 ? 'parentContentId=' : 'category='
+  def selector_param
+    $config.mode == 2 ? 'parentContentId=' : 'category='
   end
 
-  def assign_selector_key
-    @selector_key = $config.mode == 2 ? 'parent_content_id' : 'category'
+  def selector_key
+    $config.mode == 2 ? 'parent_content_id' : 'category'
   end
 
   def process_entity
@@ -39,8 +36,8 @@ class EtvMediaScraper
 
   def resource_url
     url = @entity.etv2 ? EtvMediaScraperConstants::ETV2_API_URL.dup : EtvMediaScraperConstants::ETV_API_URL.dup
-    url << @selector_param
-    url << @entity.instance_variable_get("@#{@selector_key}").to_s
+    url << selector_param
+    url << @entity.instance_variable_get("@#{selector_key}").to_s
     url << EtvMediaScraperConstants::API_PARAMS_TS_STRING << Time.new.to_i.to_s
     url << EtvMediaScraperConstants::API_PARAMS_STRING
     url
