@@ -51,11 +51,8 @@ class EtvMediaScraperEpisode
     skip_index_array.include?(source_index)
   end
 
-  def assign_destination
-    @destination = Pathname.new(File.join(@tmp_path, File.basename(@url))).cleanpath.to_s
-    return unless File.file?(@destination)
-    puts('> Removing existing file: ' << @destination) if @verbose
-    File.delete(@destination)
+  def destination
+    Pathname.new(File.join(@tmp_path, File.basename(@url))).cleanpath.to_s
   end
 
   def track_label
@@ -116,7 +113,10 @@ class EtvMediaScraperEpisode
 
   def before_download
     return if skip
-    assign_destination
+    return unless File.file?(destination)
+
+    puts('> Removing existing file: ' << destination) if @verbose
+    File.delete(destination)
   end
 
   def download
@@ -129,7 +129,7 @@ class EtvMediaScraperEpisode
 
     downloader = EtvMediaScraperDownloader.new
     downloader.url = @url
-    downloader.destination = @destination
+    downloader.destination = destination
     downloader.run
 
     after_download
@@ -137,6 +137,6 @@ class EtvMediaScraperEpisode
 
   def after_download
     FileUtils.touch(skip_file)
-    FileUtils.mv(@destination, final_loot_file)
+    FileUtils.mv(destination, final_loot_file)
   end
 end
