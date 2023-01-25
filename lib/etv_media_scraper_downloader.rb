@@ -1,6 +1,5 @@
 require 'fileutils'
 require 'net/https'
-require 'progressbar'
 require 'shellwords'
 require 'uri'
 
@@ -42,6 +41,8 @@ class EtvMediaScraperDownloader
   end
 
   def progressbar
+    require 'progressbar'
+
     @progressbar = ProgressBar.create(
       format: "%a %b\u{15E7}%i %p%% %t",
       progress_mark: ' ',
